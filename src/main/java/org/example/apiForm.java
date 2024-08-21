@@ -1,5 +1,7 @@
 package org.example;
 
+import org.example.apiCaller.ApiCaller;
+import org.example.apiCaller.ApiResponse;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -7,8 +9,9 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
 
-public class ApiForm extends JFrame {
+public class apiForm extends JFrame {
     private JComboBox requestType;
     private JTextField urlBar;
     private JButton sendButton;
@@ -18,9 +21,10 @@ public class ApiForm extends JFrame {
     private JPanel queryTab;
     private JPanel headersTab;
     private JPanel mainPanel;
+    private JLabel statusCodeLabel;
 
 
-    public ApiForm() {
+    public apiForm() {
         setTitle("kire api!");
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setSize(600, 400);
@@ -29,7 +33,16 @@ public class ApiForm extends JFrame {
         sendButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-                System.out.println(requestType.getSelectedItem());
+                String url = urlBar.getText();
+                Object method = requestType.getSelectedItem();
+                System.out.println("url:" + url + "\n method:" + requestType.getSelectedItem());
+                try {
+                    ApiResponse response = ApiCaller.callApi(url, method.toString());
+                    statusCodeLabel.setText("Status Code: " + response.getCode());
+                    responseTextArea.setText(response.getMessage());
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
             }
         });
 
@@ -69,8 +82,8 @@ public class ApiForm extends JFrame {
         JPanel emptyPanel = new JPanel();
         JTextField nameField = new JTextField("");
         JTextField valueField = new JTextField("");
-            emptyPanel.add(nameField);
-            emptyPanel.add(valueField);
+        emptyPanel.add(nameField);
+        emptyPanel.add(valueField);
 
         mainPanel.add(emptyPanel);
 
