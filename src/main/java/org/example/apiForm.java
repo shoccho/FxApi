@@ -58,14 +58,15 @@ public class apiForm extends JFrame {
     public void populateTab(JPanel rootTab, String jsonString) {
         JSONArray jsonArray = new JSONArray(jsonString);
 
-        JPanel mainPanel = new JPanel();
-        mainPanel.setLayout(new GridLayout(jsonArray.length() + 1, 1, 10, 0));
+        JPanel contentPanel = new JPanel();
+        contentPanel.setAutoscrolls(true);
+        contentPanel.setLayout(new BoxLayout(contentPanel, BoxLayout.Y_AXIS)); // Single column layout
 
         for (int i = 0; i < jsonArray.length(); i++) {
             JSONObject jsonObject = jsonArray.getJSONObject(i);
 
             JPanel panel = new JPanel();
-            panel.setLayout(new GridLayout(1, 2, 10, 0));
+            panel.setLayout(new FlowLayout());
 
             String name = jsonObject.keys().next();
             String value = jsonObject.getString(name);
@@ -73,21 +74,45 @@ public class apiForm extends JFrame {
             JTextField nameField = new JTextField(name);
             JTextField valueField = new JTextField(value);
 
+            nameField.setPreferredSize(new Dimension(200, 30));
+
+            valueField.setPreferredSize(new Dimension(300, 30));
+            JButton clearButton = new JButton("x");
+
             panel.add(nameField);
             panel.add(valueField);
+            panel.add(clearButton);
 
-            mainPanel.add(panel);
+            contentPanel.add(panel);
         }
 
-        JPanel emptyPanel = new JPanel();
-        JTextField nameField = new JTextField("");
-        JTextField valueField = new JTextField("");
-        emptyPanel.add(nameField);
-        emptyPanel.add(valueField);
+        JButton addButton = new JButton("+");
+        addButton.addActionListener(e -> {
+            JPanel newPanel = new JPanel();
+            newPanel.setLayout(new FlowLayout());
 
-        mainPanel.add(emptyPanel);
+            JTextField newNameField = new JTextField();
 
-        rootTab.setLayout(new GridLayout(1, 1));
-        rootTab.add(mainPanel);
+            JTextField newValueField = new JTextField();
+            newNameField.setPreferredSize(new Dimension(200, 30));
+            newValueField.setPreferredSize(new Dimension(300, 30));
+
+            JButton clearButton = new JButton("x");
+            newPanel.add(newNameField);
+            newPanel.add(newValueField);
+            newPanel.add(clearButton);
+
+            contentPanel.add(newPanel);
+            contentPanel.revalidate();
+            contentPanel.repaint();
+        });
+
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        buttonPanel.add(addButton);
+
+        rootTab.setLayout(new BorderLayout());
+        rootTab.add(contentPanel);
+//        rootTab.add(scrollPane, BorderLayout.CENTER);
+        rootTab.add(buttonPanel, BorderLayout.SOUTH);
     }
 }
