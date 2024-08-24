@@ -15,9 +15,10 @@ public class FieldsManager {
     }
 
 
-    public void populateFields(JPanel queryTab, JPanel headersTab) {
+    public void populateFields(JPanel queryTab, JPanel headersTab, JPanel bodyTab) {
         populateTab(queryTab, state.getState("queries"), "queries");
         populateTab(headersTab, state.getState("headers"), "headers");
+        populateTab(bodyTab, state.getState("body"), "body");
     }
 
     public void populateTab(JPanel rootTab, JSONObject jsonObject, String type) {
