@@ -2,10 +2,13 @@ package org.example;
 
 import org.example.apiCaller.ApiCaller;
 import org.example.apiCaller.ApiResponse;
+import org.example.storage.Storage;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import javax.swing.*;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -23,6 +26,7 @@ public class apiForm extends JFrame {
     private JPanel mainPanel;
     private JLabel statusCodeLabel;
 
+    private Storage storage;
 
     public apiForm() {
         setTitle("kire api!");
@@ -30,12 +34,14 @@ public class apiForm extends JFrame {
         setSize(600, 400);
         setVisible(true);
 
+        this.storage = new Storage(".");
+
         sendButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
                 String url = urlBar.getText();
                 Object method = requestType.getSelectedItem();
-                System.out.println("url:" + url + "\n method:" + requestType.getSelectedItem());
+                System.out.println("url:" + url + "\n Method:" + requestType.getSelectedItem());
                 try {
                     ApiResponse response = ApiCaller.callApi(url, method.toString());
                     statusCodeLabel.setText("Status Code: " + response.getCode());
@@ -45,47 +51,61 @@ public class apiForm extends JFrame {
                 }
             }
         });
+        populateFields();
 
-        //add into query
-        String queries = "[{name:test}, {name:shoccho}]";
-        populateTab(queryTab, queries);
-        //add to headers
-        String headers = "[{name:test}, {name:shoccho}]";
-        populateTab(headersTab, headers);
         setContentPane(mainPanel);
     }
 
+    public void populateFields() {
+        String queries = storage.readJSON("queries.json");
+//        if (queries != null) {
+        populateTab(queryTab, queries);
+//        }
+
+        String headers = storage.readJSON("headers.json");
+//        if (headers != null) {
+        populateTab(headersTab, headers);
+//        }
+    }
+
     public void populateTab(JPanel rootTab, String jsonString) {
-        JSONArray jsonArray = new JSONArray(jsonString);
+
 
         JPanel contentPanel = new JPanel();
         contentPanel.setAutoscrolls(true);
         contentPanel.setLayout(new BoxLayout(contentPanel, BoxLayout.Y_AXIS)); // Single column layout
+        if (jsonString != null) {
 
-        for (int i = 0; i < jsonArray.length(); i++) {
-            JSONObject jsonObject = jsonArray.getJSONObject(i);
+            JSONArray jsonArray = new JSONArray(jsonString);
+            for (int i = 0; i < jsonArray.length(); i++) {
+                JSONObject jsonObject = jsonArray.getJSONObject(i);
 
-            JPanel panel = new JPanel();
-            panel.setLayout(new FlowLayout());
+                JPanel panel = new JPanel();
+                panel.setLayout(new FlowLayout());
 
-            String name = jsonObject.keys().next();
-            String value = jsonObject.getString(name);
+                String name = jsonObject.keys().next();
+                String value = jsonObject.getString(name);
 
-            JTextField nameField = new JTextField(name);
-            JTextField valueField = new JTextField(value);
+                JTextField nameField = new JTextField(name);
+                JTextField valueField = new JTextField(value);
+                nameField.setPreferredSize(new Dimension(200, 30));
+                valueField.setPreferredSize(new Dimension(330, 30));
+                JButton clearButton = new JButton("x");
 
-            nameField.setPreferredSize(new Dimension(200, 30));
+                nameField.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        System.out.println(e.getActionCommand());
+                    }
+                });
 
-            valueField.setPreferredSize(new Dimension(300, 30));
-            JButton clearButton = new JButton("x");
+                panel.add(nameField);
+                panel.add(valueField);
+                panel.add(clearButton);
 
-            panel.add(nameField);
-            panel.add(valueField);
-            panel.add(clearButton);
-
-            contentPanel.add(panel);
+                contentPanel.add(panel);
+            }
         }
-
         JButton addButton = new JButton("+");
         addButton.addActionListener(e -> {
             JPanel newPanel = new JPanel();
@@ -95,13 +115,31 @@ public class apiForm extends JFrame {
 
             JTextField newValueField = new JTextField();
             newNameField.setPreferredSize(new Dimension(200, 30));
-            newValueField.setPreferredSize(new Dimension(300, 30));
+            newValueField.setPreferredSize(new Dimension(330, 30));
 
             JButton clearButton = new JButton("x");
             newPanel.add(newNameField);
             newPanel.add(newValueField);
             newPanel.add(clearButton);
 
+            newNameField.getDocument().addDocumentListener(new DocumentListener() {
+                @Override
+                public void insertUpdate(DocumentEvent e) {
+
+                    storage.saveJSON("{name:test}", "fart");
+                }
+
+                @Override
+                public void removeUpdate(DocumentEvent e) {
+
+                    storage.saveJSON("{name:test}", "fart");
+                }
+
+                @Override
+                public void changedUpdate(DocumentEvent e) {
+                    storage.saveJSON("{name:test}", "fart");
+                }
+            });
             contentPanel.add(newPanel);
             contentPanel.revalidate();
             contentPanel.repaint();
