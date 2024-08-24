@@ -1,5 +1,7 @@
 package org.example.components;
 
+import org.example.state.State;
+
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
@@ -7,12 +9,12 @@ import java.awt.*;
 import java.util.Objects;
 
 public class FieldRow extends JPanel {
-    private int row;
     private String rowName;
     private String rowValue;
     private JTextField nameField;
     private JTextField valueField;
-
+    private final State state;
+    private String type;
 
     public String getRowName() {
         return this.rowName;
@@ -20,6 +22,7 @@ public class FieldRow extends JPanel {
 
     public void setRowName(String name) {
         this.rowName = name;
+        updateState();
     }
 
     public String getRowValue() {
@@ -28,15 +31,22 @@ public class FieldRow extends JPanel {
 
     public void setRowValue(String value) {
         this.rowValue = value;
+        updateState();
     }
 
-    public FieldRow(int row, String name, String value) {
+    public void updateState() {
+        this.state.updateState(this.type, this.rowName, this.rowValue);
+    }
+
+    public FieldRow(String name, String value, String type, State state) {
         super();
-        this.row = row;
         this.rowName = name;
         this.rowValue = value;
         this.nameField = new JTextField(name);
         this.valueField = new JTextField(value);
+        this.state = state;
+        this.type = type;
+
         loadLayout();
     }
 
@@ -55,7 +65,7 @@ public class FieldRow extends JPanel {
         this.add(clearButton);
     }
 
-    private class FieldRowListener implements DocumentListener {
+    private static class FieldRowListener implements DocumentListener {
 
         private final FieldRow row;
         private final String fieldType;
@@ -64,7 +74,6 @@ public class FieldRow extends JPanel {
             this.row = row;
             this.fieldType = value;
         }
-
 
         @Override
         public void insertUpdate(DocumentEvent e) {

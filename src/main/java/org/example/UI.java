@@ -3,14 +3,10 @@ package org.example;
 import org.example.apiCaller.ApiCaller;
 import org.example.apiCaller.ApiResponse;
 import org.example.components.FieldsManager;
+import org.example.state.State;
 import org.example.storage.Storage;
-import org.json.JSONArray;
-import org.json.JSONObject;
 
 import javax.swing.*;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
-import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
@@ -52,7 +48,8 @@ public class UI extends JFrame {
                 }
             }
         });
-        FieldsManager fieldsManager = new FieldsManager(storage);
+        State state = new State(storage);
+        FieldsManager fieldsManager = new FieldsManager(state);
         fieldsManager.populateFields(queryTab, headersTab);
         setContentPane(mainPanel);
     }

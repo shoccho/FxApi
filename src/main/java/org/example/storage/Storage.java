@@ -1,7 +1,5 @@
 package org.example.storage;
 
-import org.json.JSONObject;
-
 import java.io.*;
 
 public class Storage {
@@ -13,27 +11,25 @@ public class Storage {
         }
     }
 
-    public boolean saveJSON(String content, String fileName) {
+    public void saveJSON(String content, String fileName) {
 
         File file = new File(this.path + fileName + ".json");
 
         try (BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(file))) {
             bufferedWriter.write(content);
             System.out.println("Content successfully written to: " + file.getAbsolutePath());
-            return true;
         } catch (IOException e) {
             System.err.println("An IOException occurred while writing to the file: " + e.getMessage());
-            return false;
         }
     }
 
-    public String readJSON(String fileName){
+    public String readJSON(String fileName) {
 
         if (!this.path.endsWith(File.separator)) {
             this.path += File.separator;
         }
 
-        File file = new File(this.path + fileName);
+        File file = new File(this.path + fileName + ".json");
 
         StringBuilder contentBuilder = new StringBuilder();
 
@@ -44,7 +40,7 @@ public class Storage {
             }
         } catch (IOException e) {
             System.err.println("An IOException occurred while reading the file: " + e.getMessage());
-            return null;
+            return "{}";
         }
         return contentBuilder.toString();
     }
