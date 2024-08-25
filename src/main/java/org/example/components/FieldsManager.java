@@ -11,7 +11,7 @@ import java.util.Iterator;
 public class FieldsManager {
     private final State state;
     HashMap<String, JPanel> tabs;
-    private Action clearRowAction;
+    private final Action clearRowAction;
 
     public FieldsManager(State state, JPanel headersTab, JPanel queryTab, JPanel bodyTab) {
         this.state = state;
@@ -28,7 +28,6 @@ public class FieldsManager {
         };
     }
 
-    //TODO: make this an array pls
     public void populateFields(String[] keys) {
         for (String key : keys) {
             populateTab(this.tabs.get(key), state.getState(key), key);

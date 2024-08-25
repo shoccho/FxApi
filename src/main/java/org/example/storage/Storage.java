@@ -11,25 +11,37 @@ public class Storage {
         }
     }
 
-    public void saveJSON(String content, String fileName) {
-
-        File file = new File(this.path + fileName + ".json");
+    public void saveUrl(String url) {
+        File file = new File(this.path + "url.txt");
 
         try (BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(file))) {
-            bufferedWriter.write(content);
-            System.out.println("Content successfully written to: " + file.getAbsolutePath()+content);
+            bufferedWriter.write(url);
+            System.out.println("Content successfully written to: " + file.getAbsolutePath());
         } catch (IOException e) {
             System.err.println("An IOException occurred while writing to the file: " + e.getMessage());
         }
     }
 
-    public String readJSON(String fileName) {
+
+    public void writeString(String content, String fileName) {
+
+        File file = new File(this.path + fileName);
+
+        try (BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(file))) {
+            bufferedWriter.write(content);
+            System.out.println("Content successfully written to: " + file.getAbsolutePath());
+        } catch (IOException e) {
+            System.err.println("An IOException occurred while writing to the file: " + e.getMessage());
+        }
+    }
+
+    public String readString(String fileName) {
 
         if (!this.path.endsWith(File.separator)) {
             this.path += File.separator;
         }
 
-        File file = new File(this.path + fileName + ".json");
+        File file = new File(this.path + fileName);
 
         StringBuilder contentBuilder = new StringBuilder();
 
@@ -40,6 +52,10 @@ public class Storage {
             }
         } catch (IOException e) {
             System.err.println("An IOException occurred while reading the file: " + e.getMessage());
+            //are your eyes burning uncle bob fans?
+            if (fileName == "url") {
+                return "";
+            }
             return "{}";
         }
         return contentBuilder.toString();

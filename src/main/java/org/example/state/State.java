@@ -7,7 +7,7 @@ import java.util.HashMap;
 
 public class State {
     private HashMap<String, JSONObject> data;
-
+    private String url;
     private final Storage storage;
 
     public State(Storage storage) {
@@ -17,12 +17,21 @@ public class State {
 
     }
 
-    public void loadData(){
+    public void loadData() {
         this.data = new HashMap<>();
 
-        data.put("headers", new JSONObject(storage.readJSON("headers")));
-        data.put("queries", new JSONObject(storage.readJSON("queries")));
-        data.put("body", new JSONObject(storage.readJSON("body")));
+        data.put("headers", new JSONObject(storage.readString("headers")));
+        data.put("queries", new JSONObject(storage.readString("queries")));
+        data.put("body", new JSONObject(storage.readString("body")));
+        this.url = storage.readString("url");
+    }
+
+    public void saveUrl(String url) {
+        this.url = url;
+        storage.writeString(url, "url");
+    }
+    public String getUrl(){
+        return this.url;
     }
 
     public JSONObject getState(String key) {
@@ -32,12 +41,12 @@ public class State {
     public void updateState(String key, String name, String value) {
         JSONObject jsonObject = this.data.get(key);
         jsonObject.put(name, value);
-        this.storage.saveJSON(jsonObject.toString(), key);
+        this.storage.writeString(jsonObject.toString(), key + ".json");
     }
 
-    public void removeData(String key, String fieldName){
+    public void removeData(String key, String fieldName) {
         JSONObject jsonObject = this.data.get(key);
         jsonObject.remove(fieldName);
-        this.storage.saveJSON(jsonObject.toString(), key);
+        this.storage.writeString(jsonObject.toString(), key + ".json");
     }
 }

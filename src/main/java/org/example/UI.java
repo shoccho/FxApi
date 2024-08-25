@@ -7,6 +7,8 @@ import org.example.state.State;
 import org.example.storage.Storage;
 
 import javax.swing.*;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
@@ -33,10 +35,33 @@ public class UI extends JFrame {
 
         this.storage = new Storage(".");
 
+        State state = new State(storage);
+        FieldsManager fieldsManager = new FieldsManager(state, headersTab, queryTab, bodyTab);
+        fieldsManager.populateFields(new String[]{"headers", "queries", "body"});
+        setContentPane(mainPanel);
+
+
+        urlBar.setText(state.getUrl());
+        urlBar.getDocument().addDocumentListener(new DocumentListener() {
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                state.saveUrl(urlBar.getText());
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                state.saveUrl(urlBar.getText());
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+                state.saveUrl(urlBar.getText());
+            }
+        });
         sendButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-                String url = urlBar.getText();
+                String url = state.getUrl();
                 Object method = requestType.getSelectedItem();
                 System.out.println("url:" + url + "\n Method:" + requestType.getSelectedItem());
                 try {
@@ -44,14 +69,10 @@ public class UI extends JFrame {
                     statusCodeLabel.setText("Status Code: " + response.getCode());
                     responseTextArea.setText(response.getMessage());
                 } catch (IOException e) {
-                    throw new RuntimeException(e);
+                    responseTextArea.setText(e.getMessage());
                 }
             }
         });
-        State state = new State(storage);
-        FieldsManager fieldsManager = new FieldsManager(state, headersTab, queryTab, bodyTab);
-        fieldsManager.populateFields(new String[]{"headers", "queries", "body"});
-        setContentPane(mainPanel);
     }
 
 }
