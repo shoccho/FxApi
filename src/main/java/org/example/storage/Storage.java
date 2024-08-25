@@ -53,11 +53,11 @@ public class Storage {
         } catch (IOException e) {
             System.err.println("An IOException occurred while reading the file: " + e.getMessage());
             //are your eyes burning uncle bob fans?
-            if (fileName == "url") {
-                return "";
+            if (fileName.endsWith(".json")) {
+                return "{}";
             }
-            return "{}";
+            return "";
         }
-        return contentBuilder.toString();
+        return contentBuilder.toString().strip();
     }
 }

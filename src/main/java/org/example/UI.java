@@ -5,6 +5,7 @@ import org.example.apiCaller.ApiResponse;
 import org.example.components.FieldsManager;
 import org.example.state.State;
 import org.example.storage.Storage;
+import org.json.JSONObject;
 
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
@@ -26,6 +27,7 @@ public class UI extends JFrame {
     private JLabel statusCodeLabel;
 
     private Storage storage;
+    private ApiCaller apiCaller;
 
     public UI() {
         setTitle("kire api!");
@@ -36,6 +38,8 @@ public class UI extends JFrame {
         this.storage = new Storage(".");
 
         State state = new State(storage);
+        this.apiCaller = new ApiCaller(state);
+
         FieldsManager fieldsManager = new FieldsManager(state, headersTab, queryTab, bodyTab);
         fieldsManager.populateFields(new String[]{"headers", "queries", "body"});
         setContentPane(mainPanel);
@@ -58,14 +62,14 @@ public class UI extends JFrame {
                 state.saveUrl(urlBar.getText());
             }
         });
+        requestType.addActionListener(e -> {
+            state.saveMethod(requestType.getSelectedItem().toString());
+        });
         sendButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-                String url = state.getUrl();
-                Object method = requestType.getSelectedItem();
-                System.out.println("url:" + url + "\n Method:" + requestType.getSelectedItem());
                 try {
-                    ApiResponse response = ApiCaller.callApi(url, method.toString());
+                    ApiResponse response = apiCaller.callApi();
                     statusCodeLabel.setText("Status Code: " + response.getCode());
                     responseTextArea.setText(response.getMessage());
                 } catch (IOException e) {
