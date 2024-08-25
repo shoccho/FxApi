@@ -5,20 +5,34 @@ import org.json.JSONObject;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.HashMap;
 import java.util.Iterator;
 
 public class FieldsManager {
     private final State state;
+    HashMap<String, JPanel> tabs;
+    private Action clearRowAction;
 
-    public FieldsManager(State state) {
+    public FieldsManager(State state, JPanel headersTab, JPanel queryTab, JPanel bodyTab) {
         this.state = state;
+        this.tabs = new HashMap<>();
+        this.tabs.put("headers", headersTab);
+        this.tabs.put("queries", queryTab);
+        this.tabs.put("body", bodyTab);
+
+        this.clearRowAction = new Action() {
+            @Override
+            public void execute(String key) {
+                populateFields(new String[]{key});
+            }
+        };
     }
 
-
-    public void populateFields(JPanel queryTab, JPanel headersTab, JPanel bodyTab) {
-        populateTab(queryTab, state.getState("queries"), "queries");
-        populateTab(headersTab, state.getState("headers"), "headers");
-        populateTab(bodyTab, state.getState("body"), "body");
+    //TODO: make this an array pls
+    public void populateFields(String[] keys) {
+        for (String key : keys) {
+            populateTab(this.tabs.get(key), state.getState(key), key);
+        }
     }
 
     public void populateTab(JPanel rootTab, JSONObject jsonObject, String type) {
@@ -31,13 +45,13 @@ public class FieldsManager {
             while (keys.hasNext()) {
 
                 String key = keys.next();
-                FieldRow newRow = new FieldRow(key, jsonObject.getString(key), type, state);
+                FieldRow newRow = new FieldRow(key, jsonObject.getString(key), type, state, clearRowAction);
                 contentPanel.add(newRow);
             }
         }
         JButton addButton = new JButton("+");
         addButton.addActionListener(e -> {
-            FieldRow newFieldRow = new FieldRow("", "", type, state);
+            FieldRow newFieldRow = new FieldRow("", "", type, state, clearRowAction);
 
             contentPanel.add(newFieldRow);
             contentPanel.revalidate();
@@ -46,9 +60,11 @@ public class FieldsManager {
 
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         buttonPanel.add(addButton);
-
+        rootTab.removeAll();
         rootTab.setLayout(new BorderLayout());
         rootTab.add(contentPanel);
         rootTab.add(buttonPanel, BorderLayout.SOUTH);
+        rootTab.revalidate();
+        rootTab.repaint();
     }
 }

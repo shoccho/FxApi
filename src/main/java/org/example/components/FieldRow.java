@@ -13,8 +13,9 @@ public class FieldRow extends JPanel {
     private String rowValue;
     private JTextField nameField;
     private JTextField valueField;
-    private final State state;
+    private final State state; //TODO: make this an action, rows shouldn't have direct access to state
     private String type;
+    private Action clearFieldAction;
 
     public String getRowName() {
         return this.rowName;
@@ -22,7 +23,6 @@ public class FieldRow extends JPanel {
 
     public void setRowName(String name) {
         this.rowName = name;
-        updateState();
     }
 
     public String getRowValue() {
@@ -31,21 +31,22 @@ public class FieldRow extends JPanel {
 
     public void setRowValue(String value) {
         this.rowValue = value;
-        updateState();
     }
+
 
     public void updateState() {
         this.state.updateState(this.type, this.rowName, this.rowValue);
     }
 
-    public FieldRow(String name, String value, String type, State state) {
+    public FieldRow(String name, String value, String type, State state, Action action) {
         super();
         this.rowName = name;
         this.rowValue = value;
-        this.nameField = new JTextField(name);
-        this.valueField = new JTextField(value);
+        this.nameField = new JTextField(this.rowName);
+        this.valueField = new JTextField(this.rowValue);
         this.state = state;
         this.type = type;
+        this.clearFieldAction = action;
 
         loadLayout();
     }
@@ -59,10 +60,18 @@ public class FieldRow extends JPanel {
         nameField.getDocument().addDocumentListener(new FieldRowListener(this, "name"));
 
         valueField.getDocument().addDocumentListener(new FieldRowListener(this, "value"));
+        clearButton.addActionListener(e -> {
+            clearField();
+        });
 
         this.add(nameField);
         this.add(valueField);
         this.add(clearButton);
+    }
+
+    public void clearField() {
+        this.state.removeData(this.type, this.rowName);
+        this.clearFieldAction.execute(this.type);
     }
 
     private static class FieldRowListener implements DocumentListener {
@@ -91,11 +100,13 @@ public class FieldRow extends JPanel {
         }
 
         private void update(DocumentEvent e) {
+
             if (Objects.equals(fieldType, "value")) {
                 this.row.setRowValue(this.row.valueField.getText());
             } else {
                 this.row.setRowName(this.row.nameField.getText());
             }
+            this.row.updateState();
         }
     }
 }

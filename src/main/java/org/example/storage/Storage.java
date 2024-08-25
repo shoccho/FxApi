@@ -17,7 +17,7 @@ public class Storage {
 
         try (BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(file))) {
             bufferedWriter.write(content);
-            System.out.println("Content successfully written to: " + file.getAbsolutePath());
+            System.out.println("Content successfully written to: " + file.getAbsolutePath()+content);
         } catch (IOException e) {
             System.err.println("An IOException occurred while writing to the file: " + e.getMessage());
         }

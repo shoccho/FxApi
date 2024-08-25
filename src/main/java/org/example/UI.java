@@ -49,8 +49,8 @@ public class UI extends JFrame {
             }
         });
         State state = new State(storage);
-        FieldsManager fieldsManager = new FieldsManager(state);
-        fieldsManager.populateFields(queryTab, headersTab, bodyTab);
+        FieldsManager fieldsManager = new FieldsManager(state, headersTab, queryTab, bodyTab);
+        fieldsManager.populateFields(new String[]{"headers", "queries", "body"});
         setContentPane(mainPanel);
     }
 

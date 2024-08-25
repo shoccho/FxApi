@@ -34,4 +34,10 @@ public class State {
         jsonObject.put(name, value);
         this.storage.saveJSON(jsonObject.toString(), key);
     }
+
+    public void removeData(String key, String fieldName){
+        JSONObject jsonObject = this.data.get(key);
+        jsonObject.remove(fieldName);
+        this.storage.saveJSON(jsonObject.toString(), key);
+    }
 }
