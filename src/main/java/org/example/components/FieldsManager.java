@@ -26,6 +26,7 @@ public class FieldsManager {
                 populateFields(new String[]{key});
             }
         };
+        populateFields(new String[]{"headers", "queries", "body"});
     }
 
     public void populateFields(String[] keys) {

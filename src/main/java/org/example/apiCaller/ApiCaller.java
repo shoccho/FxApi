@@ -1,34 +1,41 @@
 package org.example.apiCaller;
 
-import java.io.BufferedReader;
+import okhttp3.Call;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
+import org.example.state.State;
+
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
 
 public class ApiCaller {
-    public static ApiResponse callApi(String urlString, String method) throws IOException {
-        URL url = new URL(urlString);
+    private final State state;
 
-        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-
-        connection.setRequestMethod(method.toUpperCase());
-
-        int responseCode = connection.getResponseCode();
-        String inputLine;
-        StringBuilder response = new StringBuilder();
-        System.out.println("Response Code: " + responseCode);
-        BufferedReader in;
-        if(responseCode>299){
-            in = new BufferedReader(new InputStreamReader(connection.getErrorStream()));
-        }else {
-            in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-        }
-
-        while ((inputLine = in.readLine()) != null) {
-            response.append(inputLine);
-        }
-        in.close();
-        return new ApiResponse(responseCode, response.toString());
+    public ApiCaller(State state) {
+        this.state = state;
     }
+
+    public ApiResponse callApi() throws IOException {
+        String url = this.state.getUrl();
+        String method = this.state.getMethod();
+        if (method.equalsIgnoreCase("get")) {
+            Request request = new Request.Builder()
+                    .url(url)
+                    .build();
+
+            OkHttpClient client = new OkHttpClient();
+
+            Call call = client.newCall(request);
+            try {
+                Response response = call.execute();
+                return new ApiResponse(response.code(), response.body().string());
+            } catch (IOException e) {
+                throw new IOException(e);
+            }
+        } else {
+            throw new Error("UnImplemented"+method);
+        }
+
+    }
+
 }
