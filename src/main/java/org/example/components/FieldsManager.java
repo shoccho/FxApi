@@ -1,5 +1,6 @@
 package org.example.components;
 
+import org.example.components.actions.DeleteField;
 import org.example.state.State;
 import org.json.JSONObject;
 
@@ -11,7 +12,7 @@ import java.util.Iterator;
 public class FieldsManager {
     private final State state;
     HashMap<String, JPanel> tabs;
-    private final Action clearRowAction;
+    private final DeleteField clearRowAction;
 
     public FieldsManager(State state, JPanel headersTab, JPanel queryTab, JPanel bodyTab) {
         this.state = state;
@@ -20,12 +21,7 @@ public class FieldsManager {
         this.tabs.put("queries", queryTab);
         this.tabs.put("body", bodyTab);
 
-        this.clearRowAction = new Action() {
-            @Override
-            public void execute(String key) {
-                populateFields(new String[]{key});
-            }
-        };
+        this.clearRowAction = key -> populateFields(new String[]{key});
         populateFields(new String[]{"headers", "queries", "body"});
     }
 
@@ -45,13 +41,17 @@ public class FieldsManager {
             while (keys.hasNext()) {
 
                 String key = keys.next();
-                FieldRow newRow = new FieldRow(key, jsonObject.getString(key), type, state, clearRowAction);
+                JSONObject child = new JSONObject(jsonObject.getString(key));
+                String name = child.keys().next();
+                String value = child.getString(name);
+                FieldRow newRow = new FieldRow(key, name, value, type, state, clearRowAction);
                 contentPanel.add(newRow);
             }
         }
         JButton addButton = new JButton("+");
         addButton.addActionListener(e -> {
-            FieldRow newFieldRow = new FieldRow("", "", type, state, clearRowAction);
+            int length = this.state.getState(type).length();
+            FieldRow newFieldRow = new FieldRow(String.valueOf(length), "", "", type, state, clearRowAction);
 
             contentPanel.add(newFieldRow);
             contentPanel.revalidate();

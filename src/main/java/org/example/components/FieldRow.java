@@ -1,5 +1,7 @@
 package org.example.components;
 
+import org.example.components.actions.DeleteField;
+import org.example.components.actions.UpdateField;
 import org.example.state.State;
 
 import javax.swing.*;
@@ -9,13 +11,15 @@ import java.awt.*;
 import java.util.Objects;
 
 public class FieldRow extends JPanel {
+    private final String id;
     private String rowName;
     private String rowValue;
     private JTextField nameField;
     private JTextField valueField;
     private final State state; //TODO: make this an action, rows shouldn't have direct access to state
     private String type;
-    private Action clearFieldAction;
+    private DeleteField deleteField;
+    private UpdateField updateField;
 
     public String getRowName() {
         return this.rowName;
@@ -35,18 +39,20 @@ public class FieldRow extends JPanel {
 
 
     public void updateState() {
-        this.state.updateState(this.type, this.rowName, this.rowValue);
+
+        this.state.updateState(this.type, this.id, this.rowName, this.rowValue);
     }
 
-    public FieldRow(String name, String value, String type, State state, Action action) {
+    public FieldRow(String id, String name, String value, String type, State state, DeleteField deleteField) {
         super();
+        this.id = id;
         this.rowName = name;
         this.rowValue = value;
         this.nameField = new JTextField(this.rowName);
         this.valueField = new JTextField(this.rowValue);
         this.state = state;
         this.type = type;
-        this.clearFieldAction = action;
+        this.deleteField = deleteField;
 
         loadLayout();
     }
@@ -70,8 +76,8 @@ public class FieldRow extends JPanel {
     }
 
     public void clearField() {
-        this.state.removeData(this.type, this.rowName);
-        this.clearFieldAction.execute(this.type);
+        this.state.removeData(this.type, this.id);
+        this.deleteField.execute(this.type);
     }
 
     private static class FieldRowListener implements DocumentListener {
@@ -98,6 +104,7 @@ public class FieldRow extends JPanel {
         public void changedUpdate(DocumentEvent e) {
             update(e);
         }
+
 
         private void update(DocumentEvent e) {
 
