@@ -50,14 +50,14 @@ public class FieldsManager {
                 JSONObject child = new JSONObject(jsonObject.getString(key));
                 String name = child.keys().next();
                 String value = child.getString(name);
-                FieldRow newRow = new FieldRow(key, name, value, type, state, clearRowAction, updateFieldAction);
+                FieldRow newRow = new FieldRow(key, name, value, type, clearRowAction, updateFieldAction);
                 contentPanel.add(newRow);
             }
         }
         JButton addButton = new JButton("+");
         addButton.addActionListener(e -> {
             int length = this.state.getState(type).length();
-            FieldRow newFieldRow = new FieldRow(String.valueOf(length), "", "", type, state, clearRowAction, updateFieldAction);
+            FieldRow newFieldRow = new FieldRow(String.valueOf(length), "", "", type, clearRowAction, updateFieldAction);
 
             contentPanel.add(newFieldRow);
             contentPanel.revalidate();

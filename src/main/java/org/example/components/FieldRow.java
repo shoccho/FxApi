@@ -2,12 +2,12 @@ package org.example.components;
 
 import org.example.components.actions.DeleteField;
 import org.example.components.actions.UpdateField;
-import org.example.state.State;
 
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import java.awt.*;
+import java.awt.event.ActionEvent;
 import java.util.Objects;
 
 public class FieldRow extends JPanel {
@@ -16,20 +16,12 @@ public class FieldRow extends JPanel {
     private String rowValue;
     private final JTextField nameField;
     private final JTextField valueField;
-    private String type;
-    private DeleteField deleteField;
-    private UpdateField updateField;
-
-    public String getRowName() {
-        return this.rowName;
-    }
+    private final String type;
+    private final DeleteField deleteField;
+    private final UpdateField updateField;
 
     public void setRowName(String name) {
         this.rowName = name;
-    }
-
-    public String getRowValue() {
-        return rowValue;
     }
 
     public void setRowValue(String value) {
@@ -41,7 +33,7 @@ public class FieldRow extends JPanel {
         this.updateField.execute(this.type, this.id, this.rowName, this.rowValue);
     }
 
-    public FieldRow(String id, String name, String value, String type, State state, DeleteField deleteField, UpdateField updateField) {
+    public FieldRow(String id, String name, String value, String type, DeleteField deleteField, UpdateField updateField) {
         super();
         this.id = id;
         this.rowName = name;
@@ -63,16 +55,14 @@ public class FieldRow extends JPanel {
         nameField.getDocument().addDocumentListener(new FieldRowListener(this, "name"));
 
         valueField.getDocument().addDocumentListener(new FieldRowListener(this, "value"));
-        clearButton.addActionListener(e -> {
-            clearField();
-        });
+        clearButton.addActionListener(this::clearField);
 
         this.add(nameField);
         this.add(valueField);
         this.add(clearButton);
     }
 
-    public void clearField() {
+    public void clearField(ActionEvent _event) {
         this.deleteField.execute(this.type, this.id);
     }
 
@@ -100,7 +90,6 @@ public class FieldRow extends JPanel {
         public void changedUpdate(DocumentEvent e) {
             update(e);
         }
-
 
         private void update(DocumentEvent e) {
 

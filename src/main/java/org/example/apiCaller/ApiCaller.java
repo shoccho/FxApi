@@ -61,7 +61,7 @@ public class ApiCaller {
             String childKey = child.keys().next();
             String value = child.getString(childKey);
 
-            if (queryString.length() > 0) {
+            if (!queryString.isEmpty()) {
                 queryString.append("&");
             }
             queryString.append(childKey).append("=").append(value);
