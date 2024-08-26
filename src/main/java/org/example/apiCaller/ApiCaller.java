@@ -1,9 +1,6 @@
 package org.example.apiCaller;
 
-import okhttp3.Call;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Response;
+import okhttp3.*;
 import org.example.state.State;
 import org.json.JSONObject;
 
@@ -27,14 +24,46 @@ public class ApiCaller {
 
             while (keys.hasNext()) {
                 String key = keys.next();
-                String value = queries.getString(key);
+                JSONObject child = new JSONObject(queries.getString(key));
+
                 if (!queryString.isEmpty()) {
                     queryString.append("&");
                 }
-                queryString.append(key).append("=").append(value);
+                String childKey = child.keys().next();
+
+                queryString.append(childKey).append("=").append(child.getString(childKey));
             }
             Request request = new Request.Builder()
-                    .url(url+"?"+queryString)
+                    .url(url + "?" + queryString)
+                    .build();
+
+            OkHttpClient client = new OkHttpClient();
+            System.out.println(request.url());
+            Call call = client.newCall(request);
+            try {
+                Response response = call.execute();
+                return new ApiResponse(response.code(), response.body().string());
+            } catch (IOException e) {
+                throw new IOException(e);
+            }
+        } else if (method.equalsIgnoreCase("post")) {
+            JSONObject body = this.state.getState("body");
+            Iterator<String> keys = body.keys();
+            StringBuilder bodyJson = new StringBuilder();
+            while (keys.hasNext()) {
+                String key = keys.next();
+                String value = body.getString(key);
+                if (!bodyJson.isEmpty()) {
+                    bodyJson.append(",");
+                }
+                bodyJson.append(value);
+            }
+            final RequestBody requestBody = RequestBody.create(
+                    MediaType.parse("application/json"), bodyJson.toString());
+
+            Request request = new Request.Builder()
+                    .url(url)
+                    .method(method.toUpperCase(), requestBody)
                     .build();
 
             OkHttpClient client = new OkHttpClient();
