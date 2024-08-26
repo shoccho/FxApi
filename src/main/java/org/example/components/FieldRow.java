@@ -14,9 +14,8 @@ public class FieldRow extends JPanel {
     private final String id;
     private String rowName;
     private String rowValue;
-    private JTextField nameField;
-    private JTextField valueField;
-    private final State state; //TODO: make this an action, rows shouldn't have direct access to state
+    private final JTextField nameField;
+    private final JTextField valueField;
     private String type;
     private DeleteField deleteField;
     private UpdateField updateField;
@@ -39,21 +38,19 @@ public class FieldRow extends JPanel {
 
 
     public void updateState() {
-
-        this.state.updateState(this.type, this.id, this.rowName, this.rowValue);
+        this.updateField.execute(this.type, this.id, this.rowName, this.rowValue);
     }
 
-    public FieldRow(String id, String name, String value, String type, State state, DeleteField deleteField) {
+    public FieldRow(String id, String name, String value, String type, State state, DeleteField deleteField, UpdateField updateField) {
         super();
         this.id = id;
         this.rowName = name;
         this.rowValue = value;
         this.nameField = new JTextField(this.rowName);
         this.valueField = new JTextField(this.rowValue);
-        this.state = state;
         this.type = type;
         this.deleteField = deleteField;
-
+        this.updateField = updateField;
         loadLayout();
     }
 
@@ -76,8 +73,7 @@ public class FieldRow extends JPanel {
     }
 
     public void clearField() {
-        this.state.removeData(this.type, this.id);
-        this.deleteField.execute(this.type);
+        this.deleteField.execute(this.type, this.id);
     }
 
     private static class FieldRowListener implements DocumentListener {
