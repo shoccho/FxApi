@@ -1,6 +1,7 @@
 package org.example.apiCaller;
 
 import okhttp3.*;
+import org.example.model.ResponseData;
 import org.example.state.State;
 import org.json.JSONObject;
 
@@ -16,7 +17,7 @@ public class ApiCaller {
         client = new OkHttpClient();
     }
 
-    public ApiResponse callApi() throws IOException {
+    public ResponseData callApi() throws IOException {
         String url = this.state.getUrl();
         String method = this.state.getMethod().toLowerCase();
 
@@ -29,7 +30,7 @@ public class ApiCaller {
         }
     }
 
-    private ApiResponse executeGetRequest(String url) throws IOException {
+    private ResponseData executeGetRequest(String url) throws IOException {
         String queryString = buildQueryString(this.state.getState("queries"));
         Request request = new Request.Builder()
                 .url(url + "?" + queryString)
@@ -38,7 +39,7 @@ public class ApiCaller {
         return executeRequest(request);
     }
 
-    private ApiResponse executePostRequest(String url) throws IOException {
+    private ResponseData executePostRequest(String url) throws IOException {
         String bodyJson = buildBodyJson(this.state.getState("body"));
         RequestBody requestBody = RequestBody.create(
                 bodyJson, MediaType.parse("application/json"));
@@ -85,13 +86,13 @@ public class ApiCaller {
         return bodyJson.toString();
     }
 
-    private ApiResponse executeRequest(Request request) throws IOException {
+    private ResponseData executeRequest(Request request) throws IOException {
         System.out.println("Request URL: " + request.url());
         try (Response response = client.newCall(request).execute()) {
             if (response.body() != null) {
-                return new ApiResponse(response.code(), response.body().string());
+                return new ResponseData(response.code(), response.body().string());
             } else {
-                return new ApiResponse(response.code(), "");
+                return new ResponseData(response.code(), "");
             }
         }
     }

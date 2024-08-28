@@ -1,11 +1,14 @@
 package org.example.state;
 
+import org.example.model.Request;
 import org.example.storage.Storage;
 import org.json.JSONObject;
 
 import java.util.HashMap;
 
 public class State {
+    private HashMap<Integer, Request> requestHashMap;
+
     private HashMap<String, JSONObject> data;
     private String url;
     private String method;
@@ -17,6 +20,8 @@ public class State {
     }
 
     public void loadData() {
+        this.requestHashMap = new HashMap<>();
+
         this.data = new HashMap<>();
 
         data.put("headers", new JSONObject(storage.readString("headers.json")));
@@ -24,6 +29,13 @@ public class State {
         data.put("body", new JSONObject(storage.readString("body.json")));
         this.url = storage.readString("url");
         this.method = storage.readString("method");
+    }
+
+    public Request getRequest(Integer key){
+        return this.requestHashMap.get(key);
+    }
+    public void saveRequest(Integer key, Request request){
+        this.requestHashMap.put(key, request);
     }
 
     public void saveUrl(String url) {

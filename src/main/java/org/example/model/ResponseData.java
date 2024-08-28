@@ -1,10 +1,10 @@
-package org.example.apiCaller;
+package org.example.model;
 
-public class ApiResponse {
+public class ResponseData {
     int code;
     String message;
 
-    public ApiResponse(int code, String message) {
+    public ResponseData(int code, String message) {
         this.code = code;
         this.message = message;
     }
