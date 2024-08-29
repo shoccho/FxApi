@@ -10,11 +10,9 @@ import org.example.storage.Storage;
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.IOException;
 
-public class UI extends JFrame {
+public class RequestPanel extends JFrame {
     private JComboBox requestType;
     private JTextField urlBar;
     private JButton sendButton;
@@ -26,33 +24,25 @@ public class UI extends JFrame {
     private JPanel mainPanel;
     private JLabel statusCodeLabel;
 
-    private Storage storage;
-    private ApiCaller apiCaller;
+    private final ApiCaller apiCaller;
     private final State state;
     private Request request;
 
-    public UI(Integer requestKey) {
+    public RequestPanel(State state) {
         setTitle("Telegraph client");
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setSize(600, 400);
         setVisible(true);
 
-        this.storage = new Storage(".");
-        this.state = new State(storage);
+        this.state = state;
 
         this.apiCaller = new ApiCaller(state);
-
-        if(this.state.getRequest(requestKey) == null){
-            this.request = new Request();
-        }
-        this.state.saveRequest(requestKey, this.request);
+        this.request = this.state.getRequest();
 
         FieldsManager fieldsManager = new FieldsManager(state, headersTab, queryTab, bodyTab);
         fieldsManager.populateFields(new String[]{"headers", "queries", "body"});
         setContentPane(mainPanel);
 
-        // state should either be request bound so each request should map to each state object
-        // or state should hold multiple request objects than I would need to update each field with keys
 
         urlBar.setText(state.getUrl());
         urlBar.getDocument().addDocumentListener(new DocumentListener() {

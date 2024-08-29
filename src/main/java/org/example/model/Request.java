@@ -3,19 +3,24 @@ package org.example.model;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class Request {
     private int id;
     private String url;
     private String method;
-    private ArrayList<Parameter> headers;
-    private ArrayList<Parameter> queries;
-    private ArrayList<Parameter> body;
+    private HashMap<Integer, Parameter> headers;
+    private HashMap<Integer, Parameter> queries;
+    private HashMap<Integer, Parameter> body;
 
-    public Request() {
+    public Request(int id) {
+        this.id = id;
+        this.headers = new HashMap<>();
+        this.queries = new HashMap<>();
+        this.body = new HashMap<>();
     }
 
-    public Request(int id, String url, String method, ArrayList<Parameter> headers, ArrayList<Parameter> queries, ArrayList<Parameter> body) {
+    public Request(int id, String url, String method, HashMap<Integer, Parameter> headers, HashMap<Integer, Parameter> queries, HashMap<Integer, Parameter> body) {
         this.id = id;
         this.url = url;
         this.method = method;
@@ -48,31 +53,61 @@ public class Request {
         this.method = method;
     }
 
-    public ArrayList<Parameter> getHeaders() {
+    public HashMap<Integer, Parameter> getHeaders() {
         return headers;
     }
 
-    public void setHeaders(ArrayList<Parameter> headers) {
+    public void setHeaders(HashMap<Integer, Parameter> headers) {
         this.headers = headers;
     }
 
-    public ArrayList<Parameter> getQueries() {
+    public HashMap<Integer, Parameter> getQueries() {
         return queries;
     }
 
-    public void setQueries(ArrayList<Parameter> queries) {
+    public void setQueries(HashMap<Integer, Parameter> queries) {
         this.queries = queries;
     }
 
-    public ArrayList<Parameter> getBody() {
+    public HashMap<Integer, Parameter> getBody() {
         return body;
     }
 
-    public void setBody(ArrayList<Parameter> body) {
+    public void setBody(HashMap<Integer, Parameter> body) {
         this.body = body;
     }
 
     public String getJSON(){
-        return JSONObject.valueToString(this);
+        StringBuilder sb = new StringBuilder();
+        sb.append("{");
+        sb.append("id:").append(this.id).append(",");
+        sb.append("url:\"").append(this.method).append("\",");
+        sb.append("method:\"").append(this.url).append("\",");
+        sb.append("queries:[");
+        this.queries.forEach((key, val)->{
+            sb.append("{");
+            sb.append("key:\"").append(val.getKey()).append("\",");
+            sb.append("value:\"").append(val.getValue()).append("\",");
+            sb.append("},");
+        });
+        sb.append("],");
+        sb.append("headers:[");
+        this.headers.forEach((key, val)->{
+            sb.append("{");
+            sb.append("key:\"").append(val.getKey()).append("\",");
+            sb.append("value:\"").append(val.getValue()).append("\",");
+            sb.append("},");
+        });
+        sb.append("],");
+        sb.append("body:[");
+        this.body.forEach((key, val)->{
+            sb.append("{");
+            sb.append("key:\"").append(val.getKey()).append("\",");
+            sb.append("value:\"").append(val.getValue()).append("\",");
+            sb.append("}");
+        });
+        sb.append("]");
+        sb.append("}");
+        return  sb.toString();
     }
 }

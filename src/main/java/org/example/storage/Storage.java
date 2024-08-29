@@ -1,5 +1,8 @@
 package org.example.storage;
 
+import org.example.model.Request;
+import org.json.JSONObject;
+
 import java.io.*;
 
 public class Storage {
@@ -22,6 +25,28 @@ public class Storage {
         }
     }
 
+    public Request getRequest(int key){
+         if (!this.path.endsWith(File.separator)) {
+            this.path += File.separator;
+        }
+
+        File file = new File(this.path + key);
+
+        StringBuilder contentBuilder = new StringBuilder();
+
+        try (BufferedReader bufferedReader = new BufferedReader(new FileReader(file))) {
+            String line;
+            while ((line = bufferedReader.readLine()) != null) {
+                contentBuilder.append(line).append(System.lineSeparator());
+            }
+        } catch (IOException e) {
+            System.err.println("An IOException occurred while reading the file: " + e.getMessage());
+            //are your eyes burning uncle bob fans?
+            return null;
+        }
+        return (Request) JSONObject.stringToValue(contentBuilder.toString().strip());
+
+    }
 
     public void writeString(String content, String fileName) {
 
