@@ -57,6 +57,10 @@ public class Request {
         return headers;
     }
 
+    public String getHeadersString(){
+        return new JSONObject(headers).toString();
+    }
+
     public void setHeaders(HashMap<Integer, Parameter> headers) {
         this.headers = headers;
     }
@@ -65,12 +69,20 @@ public class Request {
         return queries;
     }
 
+    public String getQueriesString(){
+        return new JSONObject(queries).toString();
+    }
+
     public void setQueries(HashMap<Integer, Parameter> queries) {
         this.queries = queries;
     }
 
     public HashMap<Integer, Parameter> getBody() {
         return body;
+    }
+
+    public String getBodyString(){
+        return new JSONObject(body).toString();
     }
 
     public void setBody(HashMap<Integer, Parameter> body) {

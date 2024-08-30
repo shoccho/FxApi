@@ -44,7 +44,7 @@ public class Storage {
             //are your eyes burning uncle bob fans?
             return null;
         }
-        return (Request) JSONObject.stringToValue(contentBuilder.toString().strip());
+        return null;
 
     }
 

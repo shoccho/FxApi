@@ -2,29 +2,30 @@ package org.example.state;
 
 import org.example.model.Parameter;
 import org.example.model.Request;
+import org.example.storage.DBUtil;
 import org.example.storage.Storage;
 import org.json.JSONObject;
 
-import java.lang.reflect.Field;
-import java.util.ArrayList;
 import java.util.HashMap;
 
 public class State {
-   private Request request;
+    private Request request;
 
     private HashMap<String, JSONObject> data;
     private String url;
     private String method;
     private final Storage storage;
+    private final DBUtil db;
 
-    public State(Storage storage, int key) {
+    public State(Storage storage, int key, DBUtil db) {
         this.storage = storage;
+        this.db = db;
         loadData(key);
     }
 
     public void loadData(int key) {
         this.request = storage.getRequest(key);
-        if(this.request== null){
+        if (this.request == null) {
             this.request = new Request(key);
         }
         this.data = new HashMap<>();
@@ -34,9 +35,11 @@ public class State {
         data.put("body", new JSONObject(storage.readString("body.json")));
         this.url = storage.readString("url");
         this.method = storage.readString("method");
+        this.request.setUrl(url);
+        this.request.setMethod(method);
     }
 
-    public Request getRequest(){
+    public Request getRequest() {
         return this.request;
     }
 
@@ -69,41 +72,41 @@ public class State {
         JSONObject child = new JSONObject();
         child.put(name, value);
         jsonObject.put(id, child.toString());
-        if(key == "headers"){
+        if (key == "headers") {
             HashMap<Integer, Parameter> headers = this.request.getHeaders();
             Parameter param = headers.get(Integer.parseInt(id));
-            if(param == null){
+            if (param == null) {
                 headers.put(Integer.parseInt(id), new Parameter(name, value));
-            }else{
+            } else {
                 param.setKey(name);
                 param.setValue(value);
             }
-        }else if(key == "queries"){
+        } else if (key == "queries") {
             HashMap<Integer, Parameter> queries = this.request.getQueries();
             Parameter param = queries.get(Integer.parseInt(id));
-            if(param == null){
+            if (param == null) {
                 queries.put(Integer.parseInt(id), new Parameter(name, value));
-            }else{
+            } else {
+                param.setKey(name);
+                param.setValue(value);
+                queries.put(Integer.parseInt(id), param);
+            }
+        } else if (key == "body") {
+            HashMap<Integer, Parameter> queries = this.request.getQueries();
+            Parameter param = queries.get(Integer.parseInt(id));
+            if (param == null) {
+                queries.put(Integer.parseInt(id), new Parameter(name, value));
+            } else {
                 param.setKey(name);
                 param.setValue(value);
                 queries.put(Integer.parseInt(id), param);
             }
         }
-        else if(key == "body"){
-            HashMap<Integer, Parameter> queries = this.request.getQueries();
-            Parameter param = queries.get(Integer.parseInt(id));
-            if(param == null){
-                queries.put(Integer.parseInt(id), new Parameter(name, value));
-            }else{
-                param.setKey(name);
-                param.setValue(value);
-                queries.put(Integer.parseInt(id), param);
-            }
-        }
-        System.out.println(this.request.getJSON());
-
+//        System.out.println(this.request.getJSON());
+        System.out.println(this.request.getHeadersString() + this.request.getQueriesString());
+        this.db.saveRequest(this.request);
         this.storage.writeString(this.request.getJSON(), String.valueOf(this.request.getId()));
-        this.storage.writeString(jsonObject.toString(), key );
+        this.storage.writeString(jsonObject.toString(), key);
     }
 
     public void removeData(String key, String id) {
