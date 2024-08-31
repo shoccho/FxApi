@@ -57,7 +57,7 @@ public class State {
     }
 
     public ArrayList<Parameter> getState(String key) {
-        switch (key){
+        switch (key) {
             case "headers":
                 return this.request.getHeaders();
             case "queries":
@@ -69,36 +69,35 @@ public class State {
     }
 
     public void updateState(String key, Integer id, String name, String value) {
-        if (key == "headers") {
-            ArrayList<Parameter> headers = this.request.getHeaders();
-            if (id>headers.size()-1) {
-                headers.add(new Parameter(name, value));
-            } else {
-                Parameter param = headers.get(id);
-                param.setKey(name);
-                param.setValue(value);
-            }
-        } else if (key == "queries") {
-            ArrayList<Parameter> queries = this.request.getQueries();
-            if (id>queries.size()-1) {
-                queries.add(new Parameter(name, value));
-            } else {
-                Parameter param = queries.get(id);
-                param.setKey(name);
-                param.setValue(value);
-            }
-        } else if (key == "body") {
-            ArrayList<Parameter> body = this.request.getBody();
-            if (id>body.size()-1) {
-                body.add(new Parameter(name, value));
-            } else {
-                Parameter param = body.get(id);
-                param.setKey(name);
-                param.setValue(value);
-            }
+
+        if (key == null || id == null || name == null || value == null) {
+            throw new IllegalArgumentException("Key, id, name, and value must not be null");
         }
 
+        ArrayList<Parameter> parameters = getParameters(key);
+
+        if (id >= parameters.size()) {
+            parameters.add(new Parameter(name, value));
+        } else {
+            Parameter param = parameters.get(id);
+            param.setKey(name);
+            param.setValue(value);
+        }
         this.db.saveRequest(this.request);
+
+    }
+
+    private ArrayList<Parameter> getParameters(String key) {
+        switch (key) {
+            case "headers":
+                return this.request.getHeaders();
+            case "queries":
+                return this.request.getQueries();
+            case "body":
+                return this.request.getBody();
+            default:
+                throw new IllegalArgumentException("Invalid key: " + key);
+        }
     }
 
     public void removeData(String key, Integer id) {
