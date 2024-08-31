@@ -3,23 +3,16 @@ package org.example.state;
 import org.example.model.Parameter;
 import org.example.model.Request;
 import org.example.storage.DBUtil;
-import org.example.storage.Storage;
-import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
 public class State {
     private Request request;
 
-    private HashMap<String, JSONObject> data;
-    private String url;
-    private String method;
-    private final Storage storage;
+
     private final DBUtil db;
 
-    public State(Storage storage, int key, DBUtil db) {
-        this.storage = storage;
+    public State(Integer key, DBUtil db) {
         this.db = db;
         loadData(key);
     }
@@ -28,8 +21,10 @@ public class State {
         this.request = this.db.getRequestById(key);
         if (this.request == null) {
             this.request = new Request();
+            Integer id = this.db.saveRequest(this.request);
+            System.out.println(id);
+            this.request.setId(id);
         }
-        System.out.println(this.request.getJSON());
     }
 
     public Request getRequest() {
@@ -37,35 +32,30 @@ public class State {
     }
 
     public void saveUrl(String url) {
-        this.url = url;
         this.request.setUrl(url);
-//        storage.writeString(url, "url");
+        db.saveRequest(this.request);
     }
 
     public void saveMethod(String method) {
-        this.method = method;
         this.request.setMethod(method);
-        storage.writeString(method, "method");
+        this.db.saveRequest(request);
     }
 
     public String getMethod() {
-        return this.method;
+        return this.request.getMethod();
     }
 
     public String getUrl() {
-        return this.url;
+        return this.request.getUrl();
     }
 
     public ArrayList<Parameter> getState(String key) {
-        switch (key) {
-            case "headers":
-                return this.request.getHeaders();
-            case "queries":
-                return this.request.getQueries();
-            case "body":
-                return this.request.getBody();
-        }
-        return null;
+        return switch (key) {
+            case "headers" -> this.request.getHeaders();
+            case "queries" -> this.request.getQueries();
+            case "body" -> this.request.getBody();
+            default -> null;
+        };
     }
 
     public void updateState(String key, Integer id, String name, String value) {
@@ -88,19 +78,21 @@ public class State {
     }
 
     private ArrayList<Parameter> getParameters(String key) {
-        switch (key) {
-            case "headers":
-                return this.request.getHeaders();
-            case "queries":
-                return this.request.getQueries();
-            case "body":
-                return this.request.getBody();
-            default:
-                throw new IllegalArgumentException("Invalid key: " + key);
-        }
+        return switch (key) {
+            case "headers" -> this.request.getHeaders();
+            case "queries" -> this.request.getQueries();
+            case "body" -> this.request.getBody();
+            default -> throw new IllegalArgumentException("Invalid key: " + key);
+        };
     }
 
     public void removeData(String key, Integer id) {
+        if (key == null || id == null) {
+            throw new IllegalArgumentException("Key, id, name, and value must not be null");
+        }
+        ArrayList<Parameter> parameters = getParameters(key);
+        parameters.remove((int)id);
 
+        this.db.saveRequest(this.request);
     }
 }

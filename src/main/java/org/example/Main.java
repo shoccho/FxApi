@@ -2,16 +2,13 @@ package org.example;
 
 import org.example.state.State;
 import org.example.storage.DBUtil;
-import org.example.storage.Storage;
 
 import javax.swing.*;
 
 public class Main {
     public static void main(String[] args) {
-        Storage storage = new Storage(".");
         DBUtil db = new DBUtil();
-        State state = new State(storage, 0, db);
-
+        State state = new State(null, db);
 
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {

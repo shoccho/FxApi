@@ -2,6 +2,7 @@ package org.example.storage;
 
 import org.example.model.Request;
 
+import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -40,18 +41,41 @@ public class DBUtil {
         }
     }
 
-    public void saveRequest(Request request) {
+    public Integer saveRequest(Request request) {
+        Integer generatedId = null;
+
         try {
-            Statement statement = this.dbConnection.getConnection().createStatement();
-            String sql = "INSERT OR REPLACE INTO requests (id, url, method, headers, queries, body) values " +
-                    "('" + request.getId() + "','" + request.getUrl() + "','" + request.getMethod() + "','"
-                    + request.getHeadersString() + "','"
-                    + request.getQueriesString() + "','"
-                    + request.getBodyString() + "');";
-            System.out.println(sql);
-            statement.execute(sql);
+            Connection connection = this.dbConnection.getConnection();
+            Statement statement = connection.createStatement();
+
+            if (request.getId() == null) {
+                String sql = "INSERT INTO requests (url, method, headers, queries, body) VALUES ('"
+                        + request.getUrl() + "','"
+                        + request.getMethod() + "','"
+                        + request.getHeadersString() + "','"
+                        + request.getQueriesString() + "','"
+                        + request.getBodyString() + "');";
+                statement.executeUpdate(sql, Statement.RETURN_GENERATED_KEYS);
+
+                ResultSet resultSet = statement.getGeneratedKeys();
+                if (resultSet.next()) {
+                    generatedId = resultSet.getInt(1);
+                }
+            } else {
+                String sql = "INSERT OR REPLACE INTO requests (id, url, method, headers, queries, body) VALUES ("
+                        + request.getId() + ",'"
+                        + request.getUrl() + "','"
+                        + request.getMethod() + "','"
+                        + request.getHeadersString() + "','"
+                        + request.getQueriesString() + "','"
+                        + request.getBodyString() + "');";
+                statement.executeUpdate(sql);
+                generatedId = request.getId();
+            }
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
+
+        return generatedId;
     }
 }
