@@ -2,19 +2,20 @@ package org.example.components;
 
 import org.example.components.actions.DeleteField;
 import org.example.components.actions.UpdateField;
+import org.example.model.Parameter;
 import org.example.state.State;
-import org.json.JSONObject;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 
 public class FieldsManager {
     private final State state;
     HashMap<String, JPanel> tabs;
     private final DeleteField clearRowAction;
     private final UpdateField updateFieldAction;
+
     public FieldsManager(State state, JPanel headersTab, JPanel queryTab, JPanel bodyTab) {
         this.state = state;
         this.tabs = new HashMap<>();
@@ -27,7 +28,7 @@ public class FieldsManager {
             populateFields(new String[]{key});
         };
         this.
-        populateFields(new String[]{"headers", "queries", "body"});
+                populateFields(new String[]{"headers", "queries", "body"});
         updateFieldAction = state::updateState;
     }
 
@@ -37,27 +38,21 @@ public class FieldsManager {
         }
     }
 
-    public void populateTab(JPanel rootTab, JSONObject jsonObject, String type) {
+    public void populateTab(JPanel rootTab, ArrayList<Parameter> params, String type) {
 
         JPanel contentPanel = new JPanel();
         contentPanel.setAutoscrolls(true);
-        contentPanel.setLayout(new BoxLayout(contentPanel, BoxLayout.Y_AXIS)); // Single column layout
-        if (jsonObject != null) {
-            Iterator<String> keys = jsonObject.keys();
-            while (keys.hasNext()) {
-
-                String key = keys.next();
-                JSONObject child = new JSONObject(jsonObject.getString(key));
-                String name = child.keys().next();
-                String value = child.getString(name);
-                FieldRow newRow = new FieldRow(key, name, value, type, clearRowAction, updateFieldAction);
+        contentPanel.setLayout(new BoxLayout(contentPanel, BoxLayout.Y_AXIS));
+        if (params != null) {
+            for (int i = 0; i < params.size(); i++) {
+                FieldRow newRow = new FieldRow(i, params.get(i).getKey(), params.get(i).getValue(), type, clearRowAction, updateFieldAction);
                 contentPanel.add(newRow);
             }
         }
         JButton addButton = new JButton("+");
         addButton.addActionListener(e -> {
-            int length = this.state.getState(type).length();
-            FieldRow newFieldRow = new FieldRow(String.valueOf(length), "", "", type, clearRowAction, updateFieldAction);
+            int length = this.state.getState(type).size();
+            FieldRow newFieldRow = new FieldRow(length, "", "", type, clearRowAction, updateFieldAction);
 
             contentPanel.add(newFieldRow);
             contentPanel.revalidate();

@@ -1,26 +1,26 @@
 package org.example.model;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.function.Consumer;
 
 public class Request {
-    private int id;
+    private Integer id;
     private String url;
     private String method;
-    private HashMap<Integer, Parameter> headers;
-    private HashMap<Integer, Parameter> queries;
-    private HashMap<Integer, Parameter> body;
+    private ArrayList<Parameter> headers;
+    private ArrayList<Parameter> queries;
+    private ArrayList<Parameter> body;
 
-    public Request(int id) {
-        this.id = id;
-        this.headers = new HashMap<>();
-        this.queries = new HashMap<>();
-        this.body = new HashMap<>();
+    public Request() {
+        this.headers = new ArrayList<>();
+        this.queries = new ArrayList<>();
+        this.body = new ArrayList<>();
     }
 
-    public Request(int id, String url, String method, HashMap<Integer, Parameter> headers, HashMap<Integer, Parameter> queries, HashMap<Integer, Parameter> body) {
+    public Request(Integer id, String url, String method, ArrayList<Parameter> headers, ArrayList<Parameter> queries, ArrayList<Parameter> body) {
         this.id = id;
         this.url = url;
         this.method = method;
@@ -53,50 +53,71 @@ public class Request {
         this.method = method;
     }
 
-    public HashMap<Integer, Parameter> getHeaders() {
+    public ArrayList<Parameter> getHeaders() {
         return headers;
     }
 
-    public String getHeadersString(){
-        return new JSONObject(headers).toString();
+    public String getHeadersString() {
+        return new JSONArray(headers).toString();
     }
 
-    public void setHeaders(HashMap<Integer, Parameter> headers) {
+    public void setHeaders(ArrayList<Parameter> headers) {
         this.headers = headers;
     }
 
-    public HashMap<Integer, Parameter> getQueries() {
+    public ArrayList<Parameter> getQueries() {
         return queries;
     }
 
-    public String getQueriesString(){
-        return new JSONObject(queries).toString();
+    public String getQueriesString() {
+        return new JSONArray(queries).toString();
     }
 
-    public void setQueries(HashMap<Integer, Parameter> queries) {
+    public void setQueries(ArrayList<Parameter> queries) {
         this.queries = queries;
     }
 
-    public HashMap<Integer, Parameter> getBody() {
+    public ArrayList<Parameter> getBody() {
         return body;
     }
 
-    public String getBodyString(){
-        return new JSONObject(body).toString();
+    public String getBodyString() {
+        return new JSONArray(body).toString();
     }
 
-    public void setBody(HashMap<Integer, Parameter> body) {
+    public void setBody(ArrayList<Parameter> body) {
         this.body = body;
     }
 
-    public String getJSON(){
+    public void setParamString(String type, String jsonString) {
+        ArrayList<Parameter> params = new ArrayList<>();
+
+        JSONArray jsonArray = new JSONArray(jsonString);
+        for (int i = 0; i < jsonArray.length(); i++) {
+            JSONObject jsonObject = jsonArray.getJSONObject(i);
+            params.add(i, new Parameter(jsonObject.getString("key"), jsonObject.getString("value")));
+        }
+        switch (type) {
+            case "header":
+                this.setHeaders(params);
+                break;
+            case "query":
+                this.setQueries(params);
+                break;
+            case "body":
+                this.setBody(params);
+                break;
+        }
+    }
+
+    public String getJSON() {
         StringBuilder sb = new StringBuilder();
         sb.append("{");
         sb.append("id:").append(this.id).append(",");
         sb.append("url:\"").append(this.method).append("\",");
         sb.append("method:\"").append(this.url).append("\",");
         sb.append("queries:[");
-        this.queries.forEach((key, val)->{
+        this.queries.forEach((val) -> {
             sb.append("{");
             sb.append("key:\"").append(val.getKey()).append("\",");
             sb.append("value:\"").append(val.getValue()).append("\",");
@@ -104,7 +125,7 @@ public class Request {
         });
         sb.append("],");
         sb.append("headers:[");
-        this.headers.forEach((key, val)->{
+        this.headers.forEach((val) -> {
             sb.append("{");
             sb.append("key:\"").append(val.getKey()).append("\",");
             sb.append("value:\"").append(val.getValue()).append("\",");
@@ -112,7 +133,7 @@ public class Request {
         });
         sb.append("],");
         sb.append("body:[");
-        this.body.forEach((key, val)->{
+        this.body.forEach((val) -> {
             sb.append("{");
             sb.append("key:\"").append(val.getKey()).append("\",");
             sb.append("value:\"").append(val.getValue()).append("\",");
@@ -120,6 +141,6 @@ public class Request {
         });
         sb.append("]");
         sb.append("}");
-        return  sb.toString();
+        return sb.toString();
     }
 }

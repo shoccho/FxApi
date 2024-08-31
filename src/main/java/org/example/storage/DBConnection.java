@@ -23,8 +23,7 @@ public class DBConnection {
 
         try {
             statement = connection.createStatement();
-            statement.executeUpdate("drop table if exists requests");
-            statement.executeUpdate("create table if not exists Requests(    id identity primary key,    url text not null,    method text not null,    headers text,    queries text,    body text);");
+            statement.executeUpdate("create table if not exists Requests(    id identity primary key,    url text,    method text,    headers text,    queries text,    body text);");
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }

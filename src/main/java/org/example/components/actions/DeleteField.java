@@ -2,5 +2,5 @@ package org.example.components.actions;
 
 @FunctionalInterface
 public interface DeleteField {
-    void execute(String key, String id);
+    void execute(String key, Integer id);
 }
