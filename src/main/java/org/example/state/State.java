@@ -1,76 +1,98 @@
 package org.example.state;
 
+import org.example.model.Parameter;
 import org.example.model.Request;
-import org.example.storage.Storage;
-import org.json.JSONObject;
+import org.example.storage.DBUtil;
 
-import java.util.HashMap;
+import java.util.ArrayList;
 
 public class State {
-    private HashMap<Integer, Request> requestHashMap;
+    private Request request;
 
-    private HashMap<String, JSONObject> data;
-    private String url;
-    private String method;
-    private final Storage storage;
 
-    public State(Storage storage) {
-        this.storage = storage;
-        loadData();
+    private final DBUtil db;
+
+    public State(Integer key, DBUtil db) {
+        this.db = db;
+        loadData(key);
     }
 
-    public void loadData() {
-        this.requestHashMap = new HashMap<>();
-
-        this.data = new HashMap<>();
-
-        data.put("headers", new JSONObject(storage.readString("headers.json")));
-        data.put("queries", new JSONObject(storage.readString("queries.json")));
-        data.put("body", new JSONObject(storage.readString("body.json")));
-        this.url = storage.readString("url");
-        this.method = storage.readString("method");
+    public void loadData(Integer key) {
+        this.request = this.db.getRequestById(key);
+        if (this.request == null) {
+            this.request = new Request();
+            Integer id = this.db.saveRequest(this.request);
+            System.out.println(id);
+            this.request.setId(id);
+        }
     }
 
-    public Request getRequest(Integer key){
-        return this.requestHashMap.get(key);
-    }
-    public void saveRequest(Integer key, Request request){
-        this.requestHashMap.put(key, request);
+    public Request getRequest() {
+        return this.request;
     }
 
     public void saveUrl(String url) {
-        this.url = url;
-        storage.writeString(url, "url");
+        this.request.setUrl(url);
+        db.saveRequest(this.request);
     }
 
     public void saveMethod(String method) {
-        this.method = method;
-        storage.writeString(method, "method");
+        this.request.setMethod(method);
+        this.db.saveRequest(request);
     }
 
     public String getMethod() {
-        return this.method;
+        return this.request.getMethod();
     }
 
     public String getUrl() {
-        return this.url;
+        return this.request.getUrl();
     }
 
-    public JSONObject getState(String key) {
-        return data.get(key);
+    public ArrayList<Parameter> getState(String key) {
+        return switch (key) {
+            case "headers" -> this.request.getHeaders();
+            case "queries" -> this.request.getQueries();
+            case "body" -> this.request.getBody();
+            default -> null;
+        };
     }
 
-    public void updateState(String key, String id, String name, String value) {
-        JSONObject jsonObject = this.data.get(key);
-        JSONObject child = new JSONObject();
-        child.put(name, value);
-        jsonObject.put(id, child.toString());
-        this.storage.writeString(jsonObject.toString(), key + ".json");
+    public void updateState(String key, Integer id, String name, String value) {
+
+        if (key == null || id == null || name == null || value == null) {
+            throw new IllegalArgumentException("Key, id, name, and value must not be null");
+        }
+
+        ArrayList<Parameter> parameters = getParameters(key);
+
+        if (id >= parameters.size()) {
+            parameters.add(new Parameter(name, value));
+        } else {
+            Parameter param = parameters.get(id);
+            param.setKey(name);
+            param.setValue(value);
+        }
+        this.db.saveRequest(this.request);
+
     }
 
-    public void removeData(String key, String id) {
-        JSONObject jsonObject = this.data.get(key);
-        jsonObject.remove(id);
-        this.storage.writeString(jsonObject.toString(), key + ".json");
+    private ArrayList<Parameter> getParameters(String key) {
+        return switch (key) {
+            case "headers" -> this.request.getHeaders();
+            case "queries" -> this.request.getQueries();
+            case "body" -> this.request.getBody();
+            default -> throw new IllegalArgumentException("Invalid key: " + key);
+        };
+    }
+
+    public void removeData(String key, Integer id) {
+        if (key == null || id == null) {
+            throw new IllegalArgumentException("Key, id, name, and value must not be null");
+        }
+        ArrayList<Parameter> parameters = getParameters(key);
+        parameters.remove((int)id);
+
+        this.db.saveRequest(this.request);
     }
 }

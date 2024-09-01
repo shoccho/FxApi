@@ -1,11 +1,13 @@
 package org.example.apiCaller;
 
 import okhttp3.*;
+import org.example.model.Parameter;
 import org.example.model.ResponseData;
 import org.example.state.State;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Iterator;
 
 public class ApiCaller {
@@ -52,38 +54,33 @@ public class ApiCaller {
         return executeRequest(request);
     }
 
-    private String buildQueryString(JSONObject queries) {
+    private String buildQueryString(ArrayList<Parameter> queries) {
         StringBuilder queryString = new StringBuilder();
-        Iterator<String> keys = queries.keys();
-
-        while (keys.hasNext()) {
-            String key = keys.next();
-            JSONObject child = new JSONObject(queries.getString(key));
-            String childKey = child.keys().next();
-            String value = child.getString(childKey);
+        for (Parameter query : queries) {
+            String key = query.getKey();
+            String value = query.getValue();
 
             if (!queryString.isEmpty()) {
                 queryString.append("&");
             }
-            queryString.append(childKey).append("=").append(value);
+            queryString.append(key).append("=").append(value);
         }
 
         return queryString.toString();
     }
 
-    private String buildBodyJson(JSONObject body) {
+    private String buildBodyJson(ArrayList<Parameter> body) {
 
-        Iterator<String> keys = body.keys();
         StringBuilder bodyJson = new StringBuilder();
-        while (keys.hasNext()) {
-            String key = keys.next();
-            String value = body.getString(key);
+        for (Parameter parameter : body) {
+            String key = parameter.getKey();
+            String value = parameter.getValue();
             if (!bodyJson.isEmpty()) {
                 bodyJson.append(",");
             }
-            bodyJson.append(value);
+            bodyJson.append("{\"").append(key).append("\":\"").append(value).append("\"}");
         }
-        return bodyJson.toString();
+        return "{" + bodyJson.toString() + "}";
     }
 
     private ResponseData executeRequest(Request request) throws IOException {

@@ -11,7 +11,7 @@ import java.awt.event.ActionEvent;
 import java.util.Objects;
 
 public class FieldRow extends JPanel {
-    private final String id;
+    private final Integer id;
     private String rowName;
     private String rowValue;
     private final JTextField nameField;
@@ -33,7 +33,7 @@ public class FieldRow extends JPanel {
         this.updateField.execute(this.type, this.id, this.rowName, this.rowValue);
     }
 
-    public FieldRow(String id, String name, String value, String type, DeleteField deleteField, UpdateField updateField) {
+    public FieldRow(Integer id, String name, String value, String type, DeleteField deleteField, UpdateField updateField) {
         super();
         this.id = id;
         this.rowName = name;

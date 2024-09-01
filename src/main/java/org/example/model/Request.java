@@ -1,11 +1,13 @@
 package org.example.model;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.function.Consumer;
 
 public class Request {
-    private int id;
+    private Integer id;
     private String url;
     private String method;
     private ArrayList<Parameter> headers;
@@ -13,9 +15,12 @@ public class Request {
     private ArrayList<Parameter> body;
 
     public Request() {
+        this.headers = new ArrayList<>();
+        this.queries = new ArrayList<>();
+        this.body = new ArrayList<>();
     }
 
-    public Request(int id, String url, String method, ArrayList<Parameter> headers, ArrayList<Parameter> queries, ArrayList<Parameter> body) {
+    public Request(Integer id, String url, String method, ArrayList<Parameter> headers, ArrayList<Parameter> queries, ArrayList<Parameter> body) {
         this.id = id;
         this.url = url;
         this.method = method;
@@ -24,11 +29,11 @@ public class Request {
         this.body = body;
     }
 
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
@@ -52,12 +57,20 @@ public class Request {
         return headers;
     }
 
+    public String getHeadersString() {
+        return new JSONArray(headers).toString();
+    }
+
     public void setHeaders(ArrayList<Parameter> headers) {
         this.headers = headers;
     }
 
     public ArrayList<Parameter> getQueries() {
         return queries;
+    }
+
+    public String getQueriesString() {
+        return new JSONArray(queries).toString();
     }
 
     public void setQueries(ArrayList<Parameter> queries) {
@@ -68,11 +81,66 @@ public class Request {
         return body;
     }
 
+    public String getBodyString() {
+        return new JSONArray(body).toString();
+    }
+
     public void setBody(ArrayList<Parameter> body) {
         this.body = body;
     }
 
-    public String getJSON(){
-        return JSONObject.valueToString(this);
+    public void setParamString(String type, String jsonString) {
+        ArrayList<Parameter> params = new ArrayList<>();
+
+        JSONArray jsonArray = new JSONArray(jsonString);
+        for (int i = 0; i < jsonArray.length(); i++) {
+            JSONObject jsonObject = jsonArray.getJSONObject(i);
+            params.add(i, new Parameter(jsonObject.getString("key"), jsonObject.getString("value")));
+        }
+        switch (type) {
+            case "header":
+                this.setHeaders(params);
+                break;
+            case "query":
+                this.setQueries(params);
+                break;
+            case "body":
+                this.setBody(params);
+                break;
+        }
+    }
+
+    public String getJSON() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("{");
+        sb.append("id:").append(this.id).append(",");
+        sb.append("url:\"").append(this.method).append("\",");
+        sb.append("method:\"").append(this.url).append("\",");
+        sb.append("queries:[");
+        this.queries.forEach((val) -> {
+            sb.append("{");
+            sb.append("key:\"").append(val.getKey()).append("\",");
+            sb.append("value:\"").append(val.getValue()).append("\",");
+            sb.append("},");
+        });
+        sb.append("],");
+        sb.append("headers:[");
+        this.headers.forEach((val) -> {
+            sb.append("{");
+            sb.append("key:\"").append(val.getKey()).append("\",");
+            sb.append("value:\"").append(val.getValue()).append("\",");
+            sb.append("},");
+        });
+        sb.append("],");
+        sb.append("body:[");
+        this.body.forEach((val) -> {
+            sb.append("{");
+            sb.append("key:\"").append(val.getKey()).append("\",");
+            sb.append("value:\"").append(val.getValue()).append("\",");
+            sb.append("}");
+        });
+        sb.append("]");
+        sb.append("}");
+        return sb.toString();
     }
 }
