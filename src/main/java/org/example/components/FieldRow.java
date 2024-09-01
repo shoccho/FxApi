@@ -1,24 +1,37 @@
 package org.example.components;
 
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.geometry.Insets;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
+import javafx.scene.layout.HBox;
 import org.example.components.actions.DeleteField;
 import org.example.components.actions.UpdateField;
 
-import javax.swing.*;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.util.Objects;
-
-public class FieldRow extends JPanel {
+public class FieldRow extends HBox {
     private final Integer id;
     private String rowName;
     private String rowValue;
-    private final JTextField nameField;
-    private final JTextField valueField;
+    private final TextField nameField;
+    private final TextField valueField;
     private final String type;
     private final DeleteField deleteField;
     private final UpdateField updateField;
+
+    public FieldRow(Integer id, String name, String value, String type, DeleteField deleteField, UpdateField updateField) {
+        this.id = id;
+        this.rowName = name;
+        this.rowValue = value;
+        this.nameField = new TextField(this.rowName);
+        this.valueField = new TextField(this.rowValue);
+        this.type = type;
+        this.deleteField = deleteField;
+        this.updateField = updateField;
+
+        loadLayout();
+    }
 
     public void setRowName(String name) {
         this.rowName = name;
@@ -28,77 +41,45 @@ public class FieldRow extends JPanel {
         this.rowValue = value;
     }
 
-
     public void updateState() {
         this.updateField.execute(this.type, this.id, this.rowName, this.rowValue);
     }
 
-    public FieldRow(Integer id, String name, String value, String type, DeleteField deleteField, UpdateField updateField) {
-        super();
-        this.id = id;
-        this.rowName = name;
-        this.rowValue = value;
-        this.nameField = new JTextField(this.rowName);
-        this.valueField = new JTextField(this.rowValue);
-        this.type = type;
-        this.deleteField = deleteField;
-        this.updateField = updateField;
-        loadLayout();
+    private void loadLayout() {
+        this.setSpacing(10);
+        this.setPadding(new Insets(10));
+
+        nameField.setPrefWidth(200);
+        valueField.setPrefWidth(330);
+
+        Button clearButton = new Button("x");
+
+        nameField.textProperty().addListener(new FieldRowListener("name"));
+        valueField.textProperty().addListener(new FieldRowListener("value"));
+        clearButton.setOnAction(e -> clearField());
+
+        this.getChildren().addAll(nameField, valueField, clearButton);
     }
 
-    public void loadLayout() {
-        this.setLayout(new FlowLayout());
-        nameField.setPreferredSize(new Dimension(200, 30));
-        valueField.setPreferredSize(new Dimension(330, 30));
-        JButton clearButton = new JButton("x");
-
-        nameField.getDocument().addDocumentListener(new FieldRowListener(this, "name"));
-
-        valueField.getDocument().addDocumentListener(new FieldRowListener(this, "value"));
-        clearButton.addActionListener(this::clearField);
-
-        this.add(nameField);
-        this.add(valueField);
-        this.add(clearButton);
-    }
-
-    public void clearField(ActionEvent _event) {
+    private void clearField() {
         this.deleteField.execute(this.type, this.id);
     }
 
-    private static class FieldRowListener implements DocumentListener {
-
-        private final FieldRow row;
+    private class FieldRowListener implements ChangeListener<String> {
         private final String fieldType;
 
-        private FieldRowListener(FieldRow row, String value) {
-            this.row = row;
-            this.fieldType = value;
+        private FieldRowListener(String fieldType) {
+            this.fieldType = fieldType;
         }
 
         @Override
-        public void insertUpdate(DocumentEvent e) {
-            update(e);
-        }
-
-        @Override
-        public void removeUpdate(DocumentEvent e) {
-            update(e);
-        }
-
-        @Override
-        public void changedUpdate(DocumentEvent e) {
-            update(e);
-        }
-
-        private void update(DocumentEvent e) {
-
-            if (Objects.equals(fieldType, "value")) {
-                this.row.setRowValue(this.row.valueField.getText());
+        public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+            if (fieldType.equals("value")) {
+                setRowValue(valueField.getText());
             } else {
-                this.row.setRowName(this.row.nameField.getText());
+                setRowName(nameField.getText());
             }
-            this.row.updateState();
+            updateState();
         }
     }
 }

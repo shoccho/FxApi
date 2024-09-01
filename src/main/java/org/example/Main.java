@@ -1,17 +1,27 @@
 package org.example;
 
+import javafx.application.Application;
+import javafx.stage.Stage;
 import org.example.UI.MainFrame;
-import org.example.UI.RequestPanel;
 import org.example.state.State;
 import org.example.storage.DBUtil;
 
-import javax.swing.*;
+public class Main extends Application {
 
-public class Main {
+    private DBUtil db;
+    private State state;
+
     public static void main(String[] args) {
-        DBUtil db = new DBUtil();
-        State state = new State(null, db);
+        launch(args);
+    }
 
-        SwingUtilities.invokeLater(() -> new MainFrame(db));
+    @Override
+    public void start(Stage primaryStage) {
+        // Initialize DBUtil and State here
+        db = new DBUtil();
+
+        // Create and show the main frame
+        MainFrame mainFrame = new MainFrame(db);
+        mainFrame.start(primaryStage);
     }
 }

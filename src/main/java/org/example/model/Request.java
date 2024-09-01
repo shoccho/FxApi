@@ -91,7 +91,7 @@ public class Request {
 
     public void setParamString(String type, String jsonString) {
         ArrayList<Parameter> params = new ArrayList<>();
-
+        if(jsonString == null)return;
         JSONArray jsonArray = new JSONArray(jsonString);
         for (int i = 0; i < jsonArray.length(); i++) {
             JSONObject jsonObject = jsonArray.getJSONObject(i);
