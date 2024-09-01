@@ -1,68 +1,46 @@
 package org.example.UI;
 
+import javafx.geometry.Insets;
+import javafx.scene.control.*;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
 import org.example.apiCaller.ApiCaller;
 import org.example.components.FieldsManager;
-import org.example.model.Request;
 import org.example.model.ResponseData;
 import org.example.state.State;
 
-import javax.swing.*;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
-import java.awt.*;
 import java.io.IOException;
 
-public class RequestPanel extends JPanel {
-    private JComboBox<String> requestType;
-    private JTextField urlBar;
-    private JButton sendButton;
-    private JTabbedPane tabs;
-    private JTextArea responseTextArea;
-    private JPanel bodyTab;
-    private JPanel queryTab;
-    private JPanel headersTab;
-    private JLabel statusCodeLabel;
+public class RequestPanel extends BorderPane {
+    private ComboBox<String> requestType;
+    private TextField urlBar;
+    private Button sendButton;
+    private TabPane tabs;
+    private TextArea responseTextArea;
 
+    private Label statusCodeLabel;
     private final ApiCaller apiCaller;
-    private final State state;
-
-    FieldsManager fieldsManager;
 
     public RequestPanel(State state) {
-        this.state = state;
         this.apiCaller = new ApiCaller(state);
 
         initComponents();
 
-        setLayout(new BorderLayout());
-        add(createTopPanel(), BorderLayout.NORTH);
-        add(createTabsPanel(), BorderLayout.CENTER);
-        add(createResponsePanel(), BorderLayout.SOUTH);
-
-        fieldsManager = new FieldsManager(state, headersTab, queryTab, bodyTab);
+        setTop(createTopPanel());
+        setCenter(tabs);
+        setBottom(createResponsePanel());
 
         urlBar.setText(state.getUrl());
 
-        urlBar.getDocument().addDocumentListener(new DocumentListener() {
-            @Override
-            public void insertUpdate(DocumentEvent e) {
-                state.saveUrl(urlBar.getText());
-            }
+        urlBar.textProperty().addListener((obs, oldText, newText) -> state.saveUrl(newText));
 
-            @Override
-            public void removeUpdate(DocumentEvent e) {
-                state.saveUrl(urlBar.getText());
-            }
-
-            @Override
-            public void changedUpdate(DocumentEvent e) {
-                state.saveUrl(urlBar.getText());
+        requestType.valueProperty().addListener((obs, oldValue, newValue) -> {
+            if (newValue != null) {
+                state.saveMethod(newValue);
             }
         });
-
-        requestType.addActionListener(e -> state.saveMethod(requestType.getSelectedItem().toString()));
-
-        sendButton.addActionListener(actionEvent -> {
+        FieldsManager fieldsManager = new FieldsManager(state, tabs);
+        sendButton.setOnAction(actionEvent -> {
             try {
                 ResponseData response = apiCaller.callApi();
                 statusCodeLabel.setText("Status Code: " + response.getCode());
@@ -74,42 +52,37 @@ public class RequestPanel extends JPanel {
     }
 
     private void initComponents() {
-        requestType = new JComboBox<>(new String[]{"GET", "POST", "PUT", "DELETE"});
-        urlBar = new JTextField(30);
-        sendButton = new JButton("Send");
-        tabs = new JTabbedPane();
-        responseTextArea = new JTextArea(10, 30);
-        responseTextArea.setEditable(false);
-        statusCodeLabel = new JLabel("Status Code: ");
+        requestType = new ComboBox<>();
+        requestType.getItems().addAll("GET", "POST", "PUT", "DELETE");
 
-        bodyTab = new JPanel();
-        queryTab = new JPanel();
-        headersTab = new JPanel();
+        urlBar = new TextField();
+        sendButton = new Button("Send");
+        tabs = new TabPane();
+
+        responseTextArea = new TextArea();
+        responseTextArea.setEditable(false);
+
+        statusCodeLabel = new Label("Status Code: ");
+
     }
 
-    private JPanel createTopPanel() {
-        JPanel topPanel = new JPanel();
-        topPanel.add(requestType);
-        topPanel.add(new JLabel("URL:"));
-        topPanel.add(urlBar);
-        topPanel.add(sendButton);
+    private HBox createTopPanel() {
+        HBox topPanel = new HBox(10);
+        topPanel.setPadding(new Insets(10));
+        topPanel.getChildren().addAll(
+                requestType,
+                new Label("URL:"),
+                urlBar,
+                sendButton
+        );
         return topPanel;
     }
 
-    private JPanel createTabsPanel() {
-        JPanel tabPanel = new JPanel(new BorderLayout());
-        tabs.addTab("Headers", headersTab);
-        tabs.addTab("Queries", queryTab);
-        tabs.addTab("Body", bodyTab);
-
-        tabPanel.add(tabs, BorderLayout.CENTER);
-        return tabPanel;
-    }
-
-    private JPanel createResponsePanel() {
-        JPanel responsePanel = new JPanel(new BorderLayout());
-        responsePanel.add(statusCodeLabel, BorderLayout.NORTH);
-        responsePanel.add(new JScrollPane(responseTextArea), BorderLayout.CENTER);
+    private BorderPane createResponsePanel() {
+        BorderPane responsePanel = new BorderPane();
+        responsePanel.setTop(statusCodeLabel);
+        responsePanel.setCenter(new ScrollPane(responseTextArea));
         return responsePanel;
     }
+
 }

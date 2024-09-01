@@ -1,48 +1,52 @@
 package org.example.UI;
 
+import javafx.application.Application;
+import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.control.ListView;
+import javafx.scene.control.Tab;
+import javafx.scene.control.TabPane;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.Region;
+import javafx.stage.Stage;
 import org.example.state.State;
 import org.example.storage.DBUtil;
 
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+public class MainFrame extends Application {
 
-public class MainFrame extends JFrame {
+    private final DBUtil db;
 
     public MainFrame(DBUtil db) {
+        this.db = db;
+    }
 
-        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        this.setSize(900, 600);
-        this.setLayout(new BorderLayout());
+    @Override
+    public void start(Stage primaryStage) {
+        primaryStage.setTitle("JavaFX Main Frame");
 
-        DefaultListModel<String> listModel = new DefaultListModel<>();
+        ListView<String> listView = new ListView<>();
+        listView.setPrefWidth(150);
+        TabPane tabPane = new TabPane();
 
-        JList<String> list = new JList<>(listModel);
-        JScrollPane listScrollPane = new JScrollPane(list);
-        listScrollPane.setPreferredSize(new Dimension(150, 0));
-        this.add(listScrollPane, BorderLayout.WEST);
+        Button addButton = new Button("+");
+        addButton.setOnAction(e -> addTab(tabPane, "Tab ", new RequestPanel(new State(null, db))));
 
-        JTabbedPane tabbedPane = new JTabbedPane();
-        this.add(tabbedPane, BorderLayout.CENTER);
+        BorderPane borderPane = new BorderPane();
+        borderPane.setRight(addButton);
+        borderPane.setLeft(listView);
+        borderPane.setCenter(tabPane);
 
-        JButton addButton = new JButton("+");
-        addButton.addActionListener(new ActionListener() {
+        Scene scene = new Scene(borderPane, 900, 600);
+        primaryStage.setScene(scene);
+        primaryStage.show();
+    }
 
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                JPanel newPanel = new RequestPanel(new State(null, db));
-                tabbedPane.addTab("Tab " , newPanel);
-                tabbedPane.setSelectedComponent(newPanel);
-            }
-        });
+    private void addTab(TabPane tabPane, String title, Region content) {
+        Tab newTab = new Tab(title);
+        newTab.setContent(content);
 
-        JPanel buttonPanel = new JPanel();
-        buttonPanel.setLayout( new BorderLayout());
-        buttonPanel.add(addButton, BorderLayout.EAST);
-        this.add(buttonPanel, BorderLayout.NORTH);
-
-        this.setVisible(true);
+        tabPane.getTabs().add(newTab);
+        tabPane.getSelectionModel().select(newTab);
     }
 
 }

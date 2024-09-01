@@ -1,35 +1,46 @@
 package org.example.components;
 
+import javafx.scene.control.Button;
+import javafx.scene.control.Tab;
+import javafx.scene.control.TabPane;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.VBox;
 import org.example.components.actions.DeleteField;
 import org.example.components.actions.UpdateField;
 import org.example.model.Parameter;
 import org.example.state.State;
 
-import javax.swing.*;
-import java.awt.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 
 public class FieldsManager {
+
     private final State state;
-    HashMap<String, JPanel> tabs;
+    private final HashMap<String, Tab> tabs;
     private final DeleteField clearRowAction;
     private final UpdateField updateFieldAction;
 
-    public FieldsManager(State state, JPanel headersTab, JPanel queryTab, JPanel bodyTab) {
+    public FieldsManager(State state, TabPane tabPane) {
         this.state = state;
         this.tabs = new HashMap<>();
+
+        Tab headersTab = new Tab("Headers");
+        Tab queriesTab = new Tab("Queries");
+        Tab bodyTab = new Tab("Body");
+
         this.tabs.put("headers", headersTab);
-        this.tabs.put("queries", queryTab);
+        this.tabs.put("queries", queriesTab);
         this.tabs.put("body", bodyTab);
+
+        tabPane.getTabs().addAll(headersTab, queriesTab, bodyTab);
 
         this.clearRowAction = (key, id) -> {
             this.state.removeData(key, id);
             populateFields(new String[]{key});
         };
-        this.
-                populateFields(new String[]{"headers", "queries", "body"});
-        updateFieldAction = state::updateState;
+        this.updateFieldAction = state::updateState;
+
+        populateFields(new String[]{"headers", "queries", "body"});
     }
 
     public void populateFields(String[] keys) {
@@ -38,34 +49,32 @@ public class FieldsManager {
         }
     }
 
-    public void populateTab(JPanel rootTab, ArrayList<Parameter> params, String type) {
+    public void populateTab(Tab tab, ArrayList<Parameter> params, String type) {
+        VBox contentPanel = new VBox();
+        contentPanel.setSpacing(5);
 
-        JPanel contentPanel = new JPanel();
-        contentPanel.setAutoscrolls(true);
-        contentPanel.setLayout(new BoxLayout(contentPanel, BoxLayout.Y_AXIS));
         if (params != null) {
             for (int i = 0; i < params.size(); i++) {
                 FieldRow newRow = new FieldRow(i, params.get(i).getKey(), params.get(i).getValue(), type, clearRowAction, updateFieldAction);
-                contentPanel.add(newRow);
+                contentPanel.getChildren().add(newRow);
             }
         }
-        JButton addButton = new JButton("+");
-        addButton.addActionListener(e -> {
+
+        Button addButton = new Button("+");
+        addButton.setOnAction(e -> {
             int length = this.state.getState(type).size();
             FieldRow newFieldRow = new FieldRow(length, "", "", type, clearRowAction, updateFieldAction);
-
-            contentPanel.add(newFieldRow);
-            contentPanel.revalidate();
-            contentPanel.repaint();
+            contentPanel.getChildren().add(newFieldRow);
         });
 
-        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-        buttonPanel.add(addButton);
-        rootTab.removeAll();
-        rootTab.setLayout(new BorderLayout());
-        rootTab.add(contentPanel);
-        rootTab.add(buttonPanel, BorderLayout.SOUTH);
-        rootTab.revalidate();
-        rootTab.repaint();
+        VBox buttonPanel = new VBox();
+        buttonPanel.setSpacing(5);
+        buttonPanel.getChildren().add(addButton);
+
+        BorderPane borderPane = new BorderPane();
+        borderPane.setCenter(contentPanel);
+        borderPane.setBottom(buttonPanel);
+
+        tab.setContent(borderPane);
     }
 }
