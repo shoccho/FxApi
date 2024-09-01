@@ -1,5 +1,7 @@
 package org.example;
 
+import org.example.UI.MainFrame;
+import org.example.UI.RequestPanel;
 import org.example.state.State;
 import org.example.storage.DBUtil;
 
@@ -10,10 +12,6 @@ public class Main {
         DBUtil db = new DBUtil();
         State state = new State(null, db);
 
-        SwingUtilities.invokeLater(new Runnable() {
-            public void run() {
-                new RequestPanel(state);
-            }
-        });
+        SwingUtilities.invokeLater(() -> new MainFrame(db));
     }
 }
