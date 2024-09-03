@@ -23,7 +23,7 @@ public class RequestPanel extends BorderPane {
     public RequestPanel(State state) {
         this.apiCaller = new ApiCaller(state);
 
-        initComponents();
+        initComponents(state);
 
         setTop(createTopPanel());
         setCenter(tabs);
@@ -40,6 +40,7 @@ public class RequestPanel extends BorderPane {
         });
         FieldsManager fieldsManager = new FieldsManager(state, tabs);
         sendButton.setOnAction(actionEvent -> {
+            state.saveToHistory();
             try {
                 ResponseData response = apiCaller.callApi();
                 statusCodeLabel.setText("Status Code: " + response.getCode());
@@ -50,19 +51,21 @@ public class RequestPanel extends BorderPane {
         });
     }
 
-    private void initComponents() {
+    private void initComponents(State state) {
         requestType = new ComboBox<>();
         requestType.getItems().addAll("GET", "POST", "PUT", "DELETE");
+        requestType.setValue(state.getMethod());
 
         urlBar = new TextField();
+        urlBar.setPrefWidth(500);
         sendButton = new Button("Send");
         tabs = new TabPane();
 
         responseTextArea = new TextArea();
+        responseTextArea.setPrefColumnCount(80);
         responseTextArea.setEditable(false);
 
         statusCodeLabel = new Label("Status Code: ");
-
     }
 
     private HBox createTopPanel() {

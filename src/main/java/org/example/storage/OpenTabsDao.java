@@ -11,8 +11,8 @@ import java.util.ArrayList;
 public class OpenTabsDao {
     private final DBConnection dbConnection;
 
-    public OpenTabsDao() {
-        dbConnection = new DBConnection();
+    public OpenTabsDao(DBConnection dbConnection) {
+        this.dbConnection = dbConnection;
     }
 
     public ArrayList<Request> getAllOpenTabs() {
@@ -47,7 +47,17 @@ public class OpenTabsDao {
         return allRequests;
     }
 
-    ;
+    public void removeOpenTab(Integer id) {
+        try {
+            Statement statement = this.dbConnection.getConnection().createStatement();
+            String sql = "Delete from OpenTabs where id = " + id + ";";
+
+            boolean result = statement.execute(sql);
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     public Request getRequestById(Integer id) {
         if (id == null) return null;
@@ -111,7 +121,7 @@ public class OpenTabsDao {
                 generatedId = request.getId();
             }
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            e.printStackTrace();
         }
 
         return generatedId;

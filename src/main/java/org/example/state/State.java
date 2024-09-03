@@ -6,6 +6,7 @@ import org.example.storage.OpenTabsDao;
 import org.example.storage.RequestDAO;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class State {
     private Request request;
@@ -29,10 +30,9 @@ public class State {
         this.request = this.requestDAO.getRequestById(key);
         if (this.request == null) {
             this.request = new Request();
-            Integer id = this.requestDAO.saveRequest(this.request);
-            System.out.println(id);
-            this.request.setId(id);
         }
+        this.request.setId(null);
+        this.request.setId(this.openTabsDao.saveRequest(this.request));
     }
 
     public Request getRequest() {
@@ -63,6 +63,7 @@ public class State {
 
     public void setTitle(String title) {
         this.request.setTitle(title);
+        this.openTabsDao.saveRequest(request);
     }
 
     public ArrayList<Parameter> getState(String key) {
@@ -94,7 +95,7 @@ public class State {
     }
 
     public void saveToHistory() {
-        this.requestDAO.saveRequest(request);
+        this.requestDAO.saveRequest(this.request);
     }
 
     private ArrayList<Parameter> getParameters(String key) {

@@ -26,7 +26,15 @@ public class ApplicationState {
     public ArrayList<State> getOpenTabs() {
         return openTabs;
     }
-
+    public void removeOpenTab(Integer reqId){
+        this.openTabs.removeIf(e->{
+            return e.getRequest().getId() == reqId;
+        });
+        this.openTabsDao.removeOpenTab(reqId);
+    }
+    public ArrayList<Request> getHistory(){
+        return this.requestDao.getHistory();
+    }
     public void openTab(Integer id) {
         if (id == null) {
             this.openTabs.add(new State((Integer) null, this.openTabsDao, requestDao));

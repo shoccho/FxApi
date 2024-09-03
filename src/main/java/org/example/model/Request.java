@@ -19,9 +19,14 @@ public class Request {
         this.headers = new ArrayList<>();
         this.queries = new ArrayList<>();
         this.body = new ArrayList<>();
+        this.method = "GET";
+        this.url = "http://";
     }
 
     public String getTitle() {
+         if (this.title == null) {
+            return this.getMethod() + ":" + this.getUrl();
+        }
         return title;
     }
 

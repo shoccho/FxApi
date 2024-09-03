@@ -84,7 +84,6 @@ public class ApiCaller {
     }
 
     private ResponseData executeRequest(Request request) throws IOException {
-        System.out.println("Request URL: " + request.url());
         try (Response response = client.newCall(request).execute()) {
             if (response.body() != null) {
                 return new ResponseData(response.code(), response.body().string());

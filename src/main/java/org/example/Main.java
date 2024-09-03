@@ -3,6 +3,7 @@ package org.example;
 import javafx.application.Application;
 import javafx.stage.Stage;
 import org.example.state.ApplicationState;
+import org.example.storage.DBConnection;
 import org.example.storage.OpenTabsDao;
 import org.example.ui.MainFrame;
 import org.example.state.State;
@@ -14,6 +15,7 @@ public class Main extends Application {
     private OpenTabsDao openTabsDao;
     private ApplicationState applicationState;
     private State state;
+    private DBConnection dbConnection;
 
     public static void main(String[] args) {
         launch(args);
@@ -21,11 +23,11 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) {
-        // Initialize DBUtil and State here
-        requestDAO = new RequestDAO();
-        openTabsDao = new OpenTabsDao();
+
+        dbConnection = new DBConnection();
+        requestDAO = new RequestDAO(dbConnection);
+        openTabsDao = new OpenTabsDao(dbConnection);
         applicationState = new ApplicationState(requestDAO, openTabsDao);
-        // Create and show the main frame
         MainFrame mainFrame = new MainFrame(applicationState);
         mainFrame.start(primaryStage);
     }

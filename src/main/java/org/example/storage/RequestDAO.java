@@ -6,12 +6,45 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 
 public class RequestDAO {
     private final DBConnection dbConnection;
 
-    public RequestDAO() {
-        dbConnection = new DBConnection();
+    public RequestDAO(DBConnection dbConnection) {
+        this.dbConnection = dbConnection;
+    }
+
+    public ArrayList<Request> getHistory() {
+        ArrayList<Request> allRequests = new ArrayList<>();
+        try {
+            Statement statement = this.dbConnection.getConnection().createStatement();
+            String sql = "select * from History;";
+
+            ResultSet result = statement.executeQuery(sql);
+            while (result.next()) {
+
+                Request request = new Request();
+                request.setId(result.getInt(1));
+                request.setUrl(result.getString(2));
+                request.setMethod(result.getString(3));
+                request.setTitle(result.getString(4));
+                String headerString = result.getString(5);
+                request.setParamString("header", headerString);
+
+                String queryString = result.getString(6);
+                request.setParamString("query", queryString);
+
+                String bodyString = result.getString(7);
+                request.setParamString("body", bodyString);
+
+                allRequests.add(request);
+            }
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return allRequests;
     }
 
     public Request getRequestById(Integer id) {
@@ -25,13 +58,15 @@ public class RequestDAO {
             request.setId(result.getInt(1));
             request.setUrl(result.getString(2));
             request.setMethod(result.getString(3));
-            String headerString = result.getString(4);
+            request.setTitle(result.getString(4));
+
+            String headerString = result.getString(5);
             request.setParamString("header", headerString);
 
-            String queryString = result.getString(5);
+            String queryString = result.getString(6);
             request.setParamString("query", queryString);
 
-            String bodyString = result.getString(6);
+            String bodyString = result.getString(7);
             request.setParamString("body", bodyString);
 
             return request;
