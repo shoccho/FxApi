@@ -2,26 +2,34 @@ package org.example.state;
 
 import org.example.model.Parameter;
 import org.example.model.Request;
-import org.example.storage.DBUtil;
+import org.example.storage.OpenTabsDao;
+import org.example.storage.RequestDAO;
 
 import java.util.ArrayList;
 
 public class State {
     private Request request;
 
+    private final RequestDAO requestDAO;
+    private final OpenTabsDao openTabsDao;
 
-    private final DBUtil db;
-
-    public State(Integer key, DBUtil db) {
-        this.db = db;
+    public State(Integer key, OpenTabsDao db, RequestDAO requestDAO) {
+        this.openTabsDao = db;
+        this.requestDAO = requestDAO;
         loadData(key);
     }
 
+    public State(Request request, OpenTabsDao db, RequestDAO requestDAO) {
+        this.openTabsDao = db;
+        this.request = request;
+        this.requestDAO = requestDAO;
+    }
+
     public void loadData(Integer key) {
-        this.request = this.db.getRequestById(key);
+        this.request = this.requestDAO.getRequestById(key);
         if (this.request == null) {
             this.request = new Request();
-            Integer id = this.db.saveRequest(this.request);
+            Integer id = this.requestDAO.saveRequest(this.request);
             System.out.println(id);
             this.request.setId(id);
         }
@@ -33,12 +41,12 @@ public class State {
 
     public void saveUrl(String url) {
         this.request.setUrl(url);
-        db.saveRequest(this.request);
+        openTabsDao.saveRequest(this.request);
     }
 
     public void saveMethod(String method) {
         this.request.setMethod(method);
-        this.db.saveRequest(request);
+        this.openTabsDao.saveRequest(request);
     }
 
     public String getMethod() {
@@ -47,6 +55,14 @@ public class State {
 
     public String getUrl() {
         return this.request.getUrl();
+    }
+
+    public String getTitle() {
+        return this.request.getTitle();
+    }
+
+    public void setTitle(String title) {
+        this.request.setTitle(title);
     }
 
     public ArrayList<Parameter> getState(String key) {
@@ -73,8 +89,12 @@ public class State {
             param.setKey(name);
             param.setValue(value);
         }
-        this.db.saveRequest(this.request);
+        this.openTabsDao.saveRequest(this.request);
 
+    }
+
+    public void saveToHistory() {
+        this.requestDAO.saveRequest(request);
     }
 
     private ArrayList<Parameter> getParameters(String key) {
@@ -91,8 +111,8 @@ public class State {
             throw new IllegalArgumentException("Key, id, name, and value must not be null");
         }
         ArrayList<Parameter> parameters = getParameters(key);
-        parameters.remove((int)id);
+        parameters.remove((int) id);
 
-        this.db.saveRequest(this.request);
+        this.openTabsDao.saveRequest(this.request);
     }
 }

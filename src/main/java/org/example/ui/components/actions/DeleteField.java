@@ -1,4 +1,4 @@
-package org.example.components.actions;
+package org.example.ui.components.actions;
 
 @FunctionalInterface
 public interface DeleteField {
