@@ -31,13 +31,6 @@ public class MainFrame extends Application {
 
         VBox requestHistory = new VBox(10);
 
-        this.applicationState.getHistory().stream().forEach(request -> {
-            Label itemLabel = new Label(request.getTitle());
-            itemLabel.setOnMouseClicked(event -> {
-                applicationState.openTab(request.getId());
-            });
-            requestHistory.getChildren().add(itemLabel);
-        });
         requestHistory.setPrefWidth(150);
         TabPane tabPane = new TabPane();
         Label title = new Label("History");
@@ -45,6 +38,16 @@ public class MainFrame extends Application {
         BorderPane historyView = new BorderPane();
         historyView.setTop(title);
         historyView.setCenter(requestHistory);
+
+        this.applicationState.getHistory().stream().forEach(request -> {
+            Label itemLabel = new Label(request.getTitleForUI());
+            itemLabel.setOnMouseClicked(event -> {
+                applicationState.openTab(request.getId());
+                State state = applicationState.getOpenTabs().get(applicationState.getOpenTabs().size() - 1);
+                addTab(tabPane, state.getTitle(), state);
+            });
+            requestHistory.getChildren().add(itemLabel);
+        });
 
         Button addButton = new Button("+");
         addButton.setOnAction(e -> {

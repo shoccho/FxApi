@@ -58,7 +58,7 @@ public class State {
     }
 
     public String getTitle() {
-        return this.request.getTitle();
+        return this.request.getTitleForUI();
     }
 
     public void setTitle(String title) {

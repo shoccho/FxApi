@@ -4,6 +4,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Objects;
 import java.util.function.Consumer;
 
 public class Request {
@@ -21,10 +22,15 @@ public class Request {
         this.body = new ArrayList<>();
         this.method = "GET";
         this.url = "http://";
+        this.title = "";
     }
 
     public String getTitle() {
-         if (this.title == null) {
+        return title;
+    }
+
+    public String getTitleForUI() {
+        if (Objects.equals(this.title, "")) {
             return this.getMethod() + ":" + this.getUrl();
         }
         return title;
@@ -106,7 +112,7 @@ public class Request {
 
     public void setParamString(String type, String jsonString) {
         ArrayList<Parameter> params = new ArrayList<>();
-        if(jsonString == null)return;
+        if (jsonString == null) return;
         JSONArray jsonArray = new JSONArray(jsonString);
         for (int i = 0; i < jsonArray.length(); i++) {
             JSONObject jsonObject = jsonArray.getJSONObject(i);
