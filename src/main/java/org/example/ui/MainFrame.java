@@ -1,4 +1,4 @@
-package org.example.UI;
+package org.example.ui;
 
 import javafx.application.Application;
 import javafx.scene.Scene;
@@ -9,28 +9,40 @@ import javafx.scene.control.TabPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Region;
 import javafx.stage.Stage;
+import org.example.state.ApplicationState;
 import org.example.state.State;
-import org.example.storage.DBUtil;
+import org.example.ui.components.RequestPanel;
 
 public class MainFrame extends Application {
 
-    private final DBUtil db;
 
-    public MainFrame(DBUtil db) {
-        this.db = db;
+    private final ApplicationState applicationState;
+
+    public MainFrame(ApplicationState applicationState) {
+
+        this.applicationState = applicationState;
     }
 
     @Override
     public void start(Stage primaryStage) {
-        primaryStage.setTitle("JavaFX Main Frame");
+        primaryStage.setTitle("Telegraph Client");
 
         ListView<String> listView = new ListView<>();
         listView.setPrefWidth(150);
         TabPane tabPane = new TabPane();
 
         Button addButton = new Button("+");
-        addButton.setOnAction(e -> addTab(tabPane, "Tab ", new RequestPanel(new State(null, db))));
-
+        addButton.setOnAction(e -> {
+            applicationState.openTab(null);
+            State state = applicationState.getOpenTabs().get(applicationState.getOpenTabs().size() - 1);
+            addTab(tabPane, state.getTitle(), new RequestPanel(state));
+        });
+        try {
+            applicationState.getOpenTabs().forEach(state -> {
+                addTab(tabPane, "Request", new RequestPanel(state));
+            });
+        } catch (Exception e) {
+        }
         BorderPane borderPane = new BorderPane();
         borderPane.setRight(addButton);
         borderPane.setLeft(listView);
@@ -48,5 +60,4 @@ public class MainFrame extends Application {
         tabPane.getTabs().add(newTab);
         tabPane.getSelectionModel().select(newTab);
     }
-
 }

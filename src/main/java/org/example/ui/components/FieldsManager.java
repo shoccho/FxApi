@@ -1,12 +1,12 @@
-package org.example.components;
+package org.example.ui.components;
 
 import javafx.scene.control.Button;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
-import org.example.components.actions.DeleteField;
-import org.example.components.actions.UpdateField;
+import org.example.ui.components.actions.DeleteField;
+import org.example.ui.components.actions.UpdateField;
 import org.example.model.Parameter;
 import org.example.state.State;
 

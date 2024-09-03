@@ -13,6 +13,7 @@ public class Request {
     private ArrayList<Parameter> headers;
     private ArrayList<Parameter> queries;
     private ArrayList<Parameter> body;
+    private String title;
 
     public Request() {
         this.headers = new ArrayList<>();
@@ -20,10 +21,19 @@ public class Request {
         this.body = new ArrayList<>();
     }
 
-    public Request(Integer id, String url, String method, ArrayList<Parameter> headers, ArrayList<Parameter> queries, ArrayList<Parameter> body) {
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public Request(Integer id, String url, String method, String title, ArrayList<Parameter> headers, ArrayList<Parameter> queries, ArrayList<Parameter> body) {
         this.id = id;
         this.url = url;
         this.method = method;
+        this.title = title;
         this.headers = headers;
         this.queries = queries;
         this.body = body;
