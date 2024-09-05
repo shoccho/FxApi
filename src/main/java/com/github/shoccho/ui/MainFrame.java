@@ -1,20 +1,19 @@
 package com.github.shoccho.ui;
 
+import com.github.shoccho.model.Request;
+import com.github.shoccho.state.ApplicationState;
+import com.github.shoccho.state.State;
+import com.github.shoccho.ui.components.RequestPanel;
 import javafx.application.Application;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
-import javafx.event.Event;
-import javafx.event.EventHandler;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-import com.github.shoccho.model.Request;
-import com.github.shoccho.state.ApplicationState;
-import com.github.shoccho.state.State;
-import com.github.shoccho.ui.components.RequestPanel;
 
 public class MainFrame extends Application {
 
@@ -33,59 +32,52 @@ public class MainFrame extends Application {
 
         requestHistory.setPrefWidth(150);
         TabPane tabPane = new TabPane();
-        Label title = new Label("History");
+        Label titleLabel = new Label("History");
+        titleLabel.setStyle("-fx-font-size: 18px; -fx-font-weight: bold;");
+        titleLabel.setAlignment(Pos.CENTER);
         ObservableList<Request> historyList = applicationState.getHistory();
 
-        BorderPane historyView = new BorderPane();
-        historyView.setTop(title);
-        historyView.setCenter(requestHistory);
+        VBox historyView = new VBox();
+        ScrollPane scrollPane = new ScrollPane(requestHistory);
+        scrollPane.setFitToWidth(true);
+        scrollPane.setFitToHeight(true);
+        scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS);
+        scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+
+        historyView.getChildren().addAll(titleLabel, scrollPane);
 
         historyList.addListener((ListChangeListener<Request>) observable -> {
             requestHistory.getChildren().clear();
             for (Request request : historyList) {
                 Label itemLabel = new Label(request.getTitleForUI());
-                itemLabel.setOnMouseClicked(event -> {
-                    applicationState.openTab(request.getId());
-                });
+                itemLabel.setOnMouseClicked(event -> applicationState.openTab(request.getId()));
                 requestHistory.getChildren().add(itemLabel);
             }
         });
 
-        historyList.forEach(request -> {
+        for (Request request : historyList) {
             Label itemLabel = new Label(request.getTitleForUI());
-            itemLabel.setOnMouseClicked(event -> {
-                applicationState.openTab(request.getId());
-                State state = applicationState.getOpenTabs().get(applicationState.getOpenTabs().size() - 1);
-                addTab(tabPane, state.getTitle(), state);
-            });
+            itemLabel.setOnMouseClicked(event -> applicationState.openTab(request.getId()));
             requestHistory.getChildren().add(itemLabel);
-        });
+        }
 
         Button addButton = new Button("+");
-        addButton.setOnAction(e -> {
-            applicationState.openTab(null);
-
-        });
+        addButton.setOnAction(e -> applicationState.openTab(null));
         ObservableList<State> openTabs = applicationState.getOpenTabs();
         openTabs.addListener((ListChangeListener<? super State>) change -> {
             while (change.next()) {
-                change.getAddedSubList().forEach(state -> {
-                    addTab(tabPane, state.getTitle(), state);
-                });
+                change.getAddedSubList().forEach(state -> addTab(tabPane, state.getTitle(), state));
             }
         });
-        try {
-            applicationState.getOpenTabs().forEach(state -> {
-                addTab(tabPane, state.getTitle(), state);
-            });
-        } catch (Exception e) {
-        }
+
+        applicationState.getOpenTabs().forEach(state -> addTab(tabPane, state.getTitle(), state));
+
         BorderPane borderPane = new BorderPane();
         borderPane.setRight(addButton);
         borderPane.setLeft(historyView);
         borderPane.setCenter(tabPane);
 
-        Scene scene = new Scene(borderPane, 900, 600);
+        Scene scene = new Scene(borderPane, 1000, 500);
         primaryStage.setScene(scene);
         primaryStage.show();
     }
@@ -94,12 +86,7 @@ public class MainFrame extends Application {
         Tab newTab = new Tab(title);
         Region content = new RequestPanel(state);
         newTab.setContent(content);
-        newTab.setOnClosed(new EventHandler<Event>() {
-            @Override
-            public void handle(Event event) {
-                applicationState.removeOpenTab(state.getRequest().getId());
-            }
-        });
+        newTab.setOnClosed(event -> applicationState.removeOpenTab(state.getRequest().getId()));
 
         tabPane.getTabs().add(newTab);
         tabPane.getSelectionModel().select(newTab);
