@@ -1,7 +1,6 @@
-package org.example.storage;
+package com.github.shoccho.storage;
 
-import org.example.model.Request;
-import org.json.JSONObject;
+import com.github.shoccho.model.Request;
 
 import java.io.*;
 

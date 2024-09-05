@@ -1,4 +1,4 @@
-package org.example.storage;
+package com.github.shoccho.storage;
 
 import java.sql.Connection;
 import java.sql.DriverManager;

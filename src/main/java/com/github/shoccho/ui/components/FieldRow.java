@@ -1,4 +1,4 @@
-package org.example.ui.components;
+package com.github.shoccho.ui.components;
 
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -6,8 +6,8 @@ import javafx.geometry.Insets;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
-import org.example.ui.components.actions.DeleteField;
-import org.example.ui.components.actions.UpdateField;
+import com.github.shoccho.ui.components.actions.DeleteField;
+import com.github.shoccho.ui.components.actions.UpdateField;
 
 public class FieldRow extends HBox {
     private final Integer id;

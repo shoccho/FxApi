@@ -1,4 +1,4 @@
-package org.example.ui;
+package com.github.shoccho.ui;
 
 import javafx.application.Application;
 import javafx.collections.ListChangeListener;
@@ -11,10 +11,10 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-import org.example.model.Request;
-import org.example.state.ApplicationState;
-import org.example.state.State;
-import org.example.ui.components.RequestPanel;
+import com.github.shoccho.model.Request;
+import com.github.shoccho.state.ApplicationState;
+import com.github.shoccho.state.State;
+import com.github.shoccho.ui.components.RequestPanel;
 
 public class MainFrame extends Application {
 

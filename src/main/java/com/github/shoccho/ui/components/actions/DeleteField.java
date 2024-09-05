@@ -1,4 +1,4 @@
-package org.example.ui.components.actions;
+package com.github.shoccho.ui.components.actions;
 
 @FunctionalInterface
 public interface DeleteField {

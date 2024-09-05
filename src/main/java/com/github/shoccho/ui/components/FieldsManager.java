@@ -1,14 +1,14 @@
-package org.example.ui.components;
+package com.github.shoccho.ui.components;
 
 import javafx.scene.control.Button;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
-import org.example.ui.components.actions.DeleteField;
-import org.example.ui.components.actions.UpdateField;
-import org.example.model.Parameter;
-import org.example.state.State;
+import com.github.shoccho.ui.components.actions.DeleteField;
+import com.github.shoccho.ui.components.actions.UpdateField;
+import com.github.shoccho.model.Parameter;
+import com.github.shoccho.state.State;
 
 import java.util.ArrayList;
 import java.util.HashMap;

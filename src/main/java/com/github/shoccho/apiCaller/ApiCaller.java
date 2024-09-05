@@ -1,14 +1,12 @@
-package org.example.apiCaller;
+package com.github.shoccho.apiCaller;
 
 import okhttp3.*;
-import org.example.model.Parameter;
-import org.example.model.ResponseData;
-import org.example.state.State;
-import org.json.JSONObject;
+import com.github.shoccho.model.Parameter;
+import com.github.shoccho.model.ResponseData;
+import com.github.shoccho.state.State;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Iterator;
 
 public class ApiCaller {
     private final State state;

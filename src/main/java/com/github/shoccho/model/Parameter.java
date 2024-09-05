@@ -1,4 +1,4 @@
-package org.example.model;
+package com.github.shoccho.model;
 
 import org.json.JSONObject;
 

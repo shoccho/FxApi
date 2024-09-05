@@ -1,11 +1,10 @@
-package org.example.model;
+package com.github.shoccho.model;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Objects;
-import java.util.function.Consumer;
 
 public class Request {
     private Integer id;

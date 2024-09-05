@@ -1,12 +1,12 @@
-package org.example.ui.components;
+package com.github.shoccho.ui.components;
 
 import javafx.geometry.Insets;
 import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
-import org.example.apiCaller.ApiCaller;
-import org.example.model.ResponseData;
-import org.example.state.State;
+import com.github.shoccho.apiCaller.ApiCaller;
+import com.github.shoccho.model.ResponseData;
+import com.github.shoccho.state.State;
 
 
 public class RequestPanel extends BorderPane {

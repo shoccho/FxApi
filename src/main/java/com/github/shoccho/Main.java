@@ -1,13 +1,13 @@
-package org.example;
+package com.github.shoccho;
 
 import javafx.application.Application;
 import javafx.stage.Stage;
-import org.example.state.ApplicationState;
-import org.example.storage.DBConnection;
-import org.example.storage.OpenTabsDao;
-import org.example.ui.MainFrame;
-import org.example.state.State;
-import org.example.storage.RequestDAO;
+import com.github.shoccho.state.ApplicationState;
+import com.github.shoccho.storage.DBConnection;
+import com.github.shoccho.storage.OpenTabsDao;
+import com.github.shoccho.ui.MainFrame;
+import com.github.shoccho.state.State;
+import com.github.shoccho.storage.RequestDAO;
 
 public class Main extends Application {
 

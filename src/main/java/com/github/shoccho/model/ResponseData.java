@@ -1,4 +1,4 @@
-package org.example.model;
+package com.github.shoccho.model;
 
 public class ResponseData {
     int code;

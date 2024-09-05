@@ -1,10 +1,10 @@
-package org.example.state;
+package com.github.shoccho.state;
 
-import org.example.model.Parameter;
-import org.example.model.Request;
-import org.example.storage.OpenTabsDao;
-import org.example.storage.RequestDAO;
-import org.example.ui.components.actions.UpdateHistory;
+import com.github.shoccho.model.Parameter;
+import com.github.shoccho.model.Request;
+import com.github.shoccho.storage.OpenTabsDao;
+import com.github.shoccho.storage.RequestDAO;
+import com.github.shoccho.ui.components.actions.UpdateHistory;
 
 import java.util.ArrayList;
 
