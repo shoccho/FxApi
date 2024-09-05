@@ -5,6 +5,7 @@ import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import org.example.apiCaller.ApiCaller;
+import org.example.model.Request;
 import org.example.model.ResponseData;
 import org.example.state.State;
 
@@ -30,7 +31,6 @@ public class RequestPanel extends BorderPane {
         setBottom(createResponsePanel());
 
         urlBar.setText(state.getUrl());
-
         urlBar.textProperty().addListener((obs, oldText, newText) -> state.saveUrl(newText));
 
         requestType.valueProperty().addListener((obs, oldValue, newValue) -> {
@@ -45,6 +45,7 @@ public class RequestPanel extends BorderPane {
                 ResponseData response = apiCaller.callApi();
                 statusCodeLabel.setText("Status Code: " + response.getCode());
                 responseTextArea.setText(response.getMessage());
+
             } catch (IOException e) {
                 responseTextArea.setText(e.getMessage());
             }

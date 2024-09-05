@@ -4,26 +4,29 @@ import org.example.model.Parameter;
 import org.example.model.Request;
 import org.example.storage.OpenTabsDao;
 import org.example.storage.RequestDAO;
+import org.example.ui.components.actions.UpdateHistory;
 
 import java.util.ArrayList;
-import java.util.Objects;
 
 public class State {
     private Request request;
 
     private final RequestDAO requestDAO;
     private final OpenTabsDao openTabsDao;
-
-    public State(Integer key, OpenTabsDao db, RequestDAO requestDAO) {
+    private final UpdateHistory updateHistory;
+    
+    public State(Integer key, OpenTabsDao db, RequestDAO requestDAO, UpdateHistory refreshHistory) {
         this.openTabsDao = db;
         this.requestDAO = requestDAO;
         loadData(key);
+        updateHistory = refreshHistory;
     }
 
-    public State(Request request, OpenTabsDao db, RequestDAO requestDAO) {
+    public State(Request request, OpenTabsDao db, RequestDAO requestDAO, UpdateHistory refreshHistory) {
         this.openTabsDao = db;
         this.request = request;
         this.requestDAO = requestDAO;
+        updateHistory = refreshHistory;
     }
 
     public void loadData(Integer key) {
@@ -96,6 +99,7 @@ public class State {
 
     public void saveToHistory() {
         this.requestDAO.saveRequest(this.request);
+        updateHistory.execute();
     }
 
     private ArrayList<Parameter> getParameters(String key) {

@@ -1,6 +1,7 @@
 package org.example.ui;
 
 import javafx.application.Application;
+import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.collections.ObservableListBase;
 import javafx.event.Event;
@@ -11,6 +12,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import org.example.model.Request;
 import org.example.state.ApplicationState;
 import org.example.state.State;
 import org.example.ui.components.RequestPanel;
@@ -34,12 +36,24 @@ public class MainFrame extends Application {
         requestHistory.setPrefWidth(150);
         TabPane tabPane = new TabPane();
         Label title = new Label("History");
+        ObservableList<Request> historyList = applicationState.getHistory();
 
         BorderPane historyView = new BorderPane();
         historyView.setTop(title);
         historyView.setCenter(requestHistory);
 
-        this.applicationState.getHistory().stream().forEach(request -> {
+        historyList.addListener((ListChangeListener<Request>) observable -> {
+            requestHistory.getChildren().clear();
+            for (Request request : historyList) {
+                Label itemLabel = new Label(request.getTitleForUI());
+                itemLabel.setOnMouseClicked(event -> {
+                    applicationState.openTab(request.getId());
+                });
+                requestHistory.getChildren().add(itemLabel);
+            }
+        });
+
+        historyList.forEach(request -> {
             Label itemLabel = new Label(request.getTitleForUI());
             itemLabel.setOnMouseClicked(event -> {
                 applicationState.openTab(request.getId());
@@ -52,8 +66,13 @@ public class MainFrame extends Application {
         Button addButton = new Button("+");
         addButton.setOnAction(e -> {
             applicationState.openTab(null);
-            State state = applicationState.getOpenTabs().get(applicationState.getOpenTabs().size() - 1);
-            addTab(tabPane, state.getTitle(), state);
+
+        });
+        ObservableList<State> openTabs = applicationState.getOpenTabs();
+        openTabs.addListener((ListChangeListener<? super State>) change -> {
+            change.getAddedSubList().forEach(state -> {
+                addTab(tabPane, state.getTitle(), state);
+            });
         });
         try {
             applicationState.getOpenTabs().forEach(state -> {
