@@ -27,6 +27,10 @@ public class ApiCaller {
             return executeGetRequest(url);
         } else if (method.equals("post")) {
             return executePostRequest(url);
+        } else if (method.equals("put")) {
+            return executePutRequest(url);
+        } else if (method.equals("delete")) {
+            return executeDeleteRequest(url);
         } else {
             throw new UnsupportedOperationException("Unsupported method: " + method);
         }
@@ -42,6 +46,17 @@ public class ApiCaller {
         return executeRequest(request);
     }
 
+    private ResponseData executeDeleteRequest(String url) throws IOException {
+        String queryString = buildQueryString(this.state.getState("queries"));
+        Request request = new Request.Builder()
+                .url(url + "?" + queryString)
+                .headers(getHeaders())
+                .delete()
+                .build();
+
+        return executeRequest(request);
+    }
+
     private Headers getHeaders() {
         Headers.Builder headerBuilder = new Headers.Builder();
         ArrayList<Parameter> headersJSON = this.state.getState("headers");
@@ -52,11 +67,24 @@ public class ApiCaller {
         return headerBuilder.build();
     }
 
-    private ResponseData executePostRequest(String url) throws IOException {
+    private ResponseData executePutRequest(String url) throws IOException {
         String bodyJson = buildBodyJson(this.state.getState("body"));
         RequestBody requestBody = RequestBody.create(
                 bodyJson, MediaType.parse("application/json"));
 
+        Request request = new Request.Builder()
+                .url(url)
+                .put(requestBody)
+                .headers(getHeaders())
+                .build();
+
+        return executeRequest(request);
+    }
+
+    private ResponseData executePostRequest(String url) throws IOException {
+        String bodyJson = buildBodyJson(this.state.getState("body"));
+        RequestBody requestBody = RequestBody.create(
+                bodyJson, MediaType.parse("application/json"));
 
         Request request = new Request.Builder()
                 .url(url)
