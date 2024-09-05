@@ -70,9 +70,11 @@ public class MainFrame extends Application {
         });
         ObservableList<State> openTabs = applicationState.getOpenTabs();
         openTabs.addListener((ListChangeListener<? super State>) change -> {
-            change.getAddedSubList().forEach(state -> {
-                addTab(tabPane, state.getTitle(), state);
-            });
+            while (change.next()) {
+                change.getAddedSubList().forEach(state -> {
+                    addTab(tabPane, state.getTitle(), state);
+                });
+            }
         });
         try {
             applicationState.getOpenTabs().forEach(state -> {
