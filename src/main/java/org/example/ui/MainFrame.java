@@ -3,7 +3,6 @@ package org.example.ui;
 import javafx.application.Application;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
-import javafx.collections.ObservableListBase;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
@@ -18,7 +17,6 @@ import org.example.state.State;
 import org.example.ui.components.RequestPanel;
 
 public class MainFrame extends Application {
-
 
     private final ApplicationState applicationState;
 

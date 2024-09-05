@@ -5,11 +5,9 @@ import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import org.example.apiCaller.ApiCaller;
-import org.example.model.Request;
 import org.example.model.ResponseData;
 import org.example.state.State;
 
-import java.io.IOException;
 
 public class RequestPanel extends BorderPane {
     private ComboBox<String> requestType;
@@ -46,7 +44,7 @@ public class RequestPanel extends BorderPane {
                 statusCodeLabel.setText("Status Code: " + response.getCode());
                 responseTextArea.setText(response.getMessage());
 
-            } catch (IOException e) {
+            } catch (Exception e) {
                 responseTextArea.setText(e.getMessage());
             }
         });

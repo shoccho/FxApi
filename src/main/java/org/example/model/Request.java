@@ -23,6 +23,8 @@ public class Request {
         this.method = "GET";
         this.url = "http://";
         this.title = "";
+        this.headers.add(new Parameter("accept","application/json"));
+        this.headers.add(new Parameter("content-type","application/json"));
     }
 
     public String getTitle() {

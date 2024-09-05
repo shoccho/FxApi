@@ -36,9 +36,20 @@ public class ApiCaller {
         String queryString = buildQueryString(this.state.getState("queries"));
         Request request = new Request.Builder()
                 .url(url + "?" + queryString)
+                .headers(getHeaders())
                 .build();
 
         return executeRequest(request);
+    }
+
+    private Headers getHeaders() {
+        Headers.Builder headerBuilder = new Headers.Builder();
+        ArrayList<Parameter> headersJSON = this.state.getState("headers");
+
+        headersJSON.forEach(header -> {
+            headerBuilder.add(header.getKey(), header.getValue());
+        });
+        return headerBuilder.build();
     }
 
     private ResponseData executePostRequest(String url) throws IOException {
@@ -46,9 +57,11 @@ public class ApiCaller {
         RequestBody requestBody = RequestBody.create(
                 bodyJson, MediaType.parse("application/json"));
 
+
         Request request = new Request.Builder()
                 .url(url)
                 .post(requestBody)
+                .headers(getHeaders())
                 .build();
 
         return executeRequest(request);
