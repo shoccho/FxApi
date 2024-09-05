@@ -27,7 +27,7 @@ public class MainFrame extends Application {
 
     @Override
     public void start(Stage primaryStage) {
-        primaryStage.setTitle("Telegraph Client");
+        primaryStage.setTitle("FxApi");
 
         VBox requestHistory = new VBox(10);
 
