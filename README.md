@@ -2,7 +2,8 @@ A very basic api client made using java fx
 
  🏗️ Still under development 
  current screenshot
-![image](https://github.com/user-attachments/assets/c4f432e5-5963-48d4-be33-74b68891aafb)
+![image](https://github.com/user-attachments/assets/45009a26-77ef-4301-ad90-8eea2757cfbc)
+
 
 
 Current Features:
