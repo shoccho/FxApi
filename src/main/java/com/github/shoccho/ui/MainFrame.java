@@ -77,7 +77,7 @@ public class MainFrame extends Application {
 
         SplitPane splitPane = new SplitPane();
         splitPane.getItems().addAll(historyView, tabPane);
-        splitPane.setDividerPositions(0.3);
+        splitPane.setDividerPositions(0.25);
 
         Scene scene = new Scene(splitPane, 1000, 500);
         primaryStage.setScene(scene);

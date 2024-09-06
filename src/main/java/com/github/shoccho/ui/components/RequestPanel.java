@@ -1,15 +1,15 @@
 package com.github.shoccho.ui.components;
 
 import javafx.geometry.Insets;
+import javafx.geometry.Orientation;
 import javafx.scene.control.*;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.HBox;
+import javafx.scene.layout.*;
 import com.github.shoccho.apiCaller.ApiCaller;
 import com.github.shoccho.model.ResponseData;
 import com.github.shoccho.state.State;
 
 
-public class RequestPanel extends BorderPane {
+public class RequestPanel extends SplitPane {
     private ComboBox<String> requestType;
     private TextField urlBar;
     private Button sendButton;
@@ -23,11 +23,22 @@ public class RequestPanel extends BorderPane {
         this.apiCaller = new ApiCaller(state);
 
         initComponents(state);
+        setOrientation(Orientation.VERTICAL);
+        setDividerPositions(0.5);
+        VBox top = new VBox();
+        top.getChildren().add(createTopPanel());
+        top.getChildren().add(tabs);
+        getItems().add(top);
+        getItems().add(createResponsePanel());
 
-        setTop(createTopPanel());
-        setCenter(tabs);
-        setBottom(createResponsePanel());
-
+//        getChildren().add(createTopPanel());
+//        SplitPane splitPane = new SplitPane();
+//        splitPane.setOrientation(Orientation.VERTICAL);
+//        splitPane.getItems().add(tabs);
+//        splitPane.getItems().add(createResponsePanel());
+//
+//        splitPane.setDividerPositions(0.5);
+//        getChildren().add(splitPane);
         urlBar.setText(state.getUrl());
         urlBar.textProperty().addListener((obs, oldText, newText) -> state.saveUrl(newText));
 
@@ -36,7 +47,7 @@ public class RequestPanel extends BorderPane {
                 state.saveMethod(newValue);
             }
         });
-        FieldsManager fieldsManager = new FieldsManager(state, tabs);
+        new FieldsManager(state, tabs);
         sendButton.setOnAction(actionEvent -> {
             state.saveToHistory();
             try {
@@ -79,10 +90,11 @@ public class RequestPanel extends BorderPane {
         return topPanel;
     }
 
-    private BorderPane createResponsePanel() {
-        BorderPane responsePanel = new BorderPane();
-        responsePanel.setTop(statusCodeLabel);
-        responsePanel.setCenter(new ScrollPane(responseTextArea));
+    private VBox createResponsePanel() {
+        VBox responsePanel = new VBox();
+        responsePanel.getChildren().add(statusCodeLabel);
+VBox.setVgrow(responseTextArea, Priority.ALWAYS);
+        responsePanel.getChildren().add(responseTextArea);
         return responsePanel;
     }
 
