@@ -10,10 +10,11 @@ import javafx.collections.ObservableList;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+
+import static java.lang.Math.max;
 
 public class MainFrame extends Application {
 
@@ -67,19 +68,31 @@ public class MainFrame extends Application {
         openTabs.addListener((ListChangeListener<? super State>) change -> {
             while (change.next()) {
                 change.getAddedSubList().forEach(state -> addTab(tabPane, state.getTitle(), state));
+                change.next();
             }
         });
 
         applicationState.getOpenTabs().forEach(state -> addTab(tabPane, state.getTitle(), state));
+        tabPane.getTabs().add(newTabButton(tabPane));
 
-        BorderPane borderPane = new BorderPane();
-        borderPane.setRight(addButton);
-        borderPane.setLeft(historyView);
-        borderPane.setCenter(tabPane);
+        SplitPane splitPane = new SplitPane();
+        splitPane.getItems().addAll(historyView, tabPane);
+        splitPane.setDividerPositions(0.3);
 
-        Scene scene = new Scene(borderPane, 1000, 500);
+        Scene scene = new Scene(splitPane, 1000, 500);
         primaryStage.setScene(scene);
         primaryStage.show();
+    }
+
+    private Tab newTabButton(TabPane tabPane) {
+        Tab addTab = new Tab("+");
+        addTab.setClosable(false);
+        tabPane.getSelectionModel().selectedItemProperty().addListener((observable, oldTab, newTab) -> {
+            if (newTab == addTab) {
+                applicationState.openTab(null);
+            }
+        });
+        return addTab;
     }
 
     private void addTab(TabPane tabPane, String title, State state) {
@@ -88,7 +101,7 @@ public class MainFrame extends Application {
         newTab.setContent(content);
         newTab.setOnClosed(event -> applicationState.removeOpenTab(state.getRequest().getId()));
 
-        tabPane.getTabs().add(newTab);
+        tabPane.getTabs().add(max(0,tabPane.getTabs().size() - 1), newTab);
         tabPane.getSelectionModel().select(newTab);
     }
 }
