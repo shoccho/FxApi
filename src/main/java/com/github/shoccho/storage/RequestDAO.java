@@ -19,7 +19,7 @@ public class RequestDAO {
         ArrayList<Request> allRequests = new ArrayList<>();
         try {
             Statement statement = this.dbConnection.getConnection().createStatement();
-            String sql = "select * from History;";
+            String sql = "select * from History ORDER BY id DESC;";
 
             ResultSet result = statement.executeQuery(sql);
             while (result.next()) {
@@ -76,7 +76,7 @@ public class RequestDAO {
         }
     }
 
-    public Integer saveRequest(Request request) {
+    public void saveRequest(Request request) {
         Integer generatedId = null;
 
         try {
@@ -102,6 +102,5 @@ public class RequestDAO {
             throw new RuntimeException(e);
         }
 
-        return generatedId;
     }
 }
