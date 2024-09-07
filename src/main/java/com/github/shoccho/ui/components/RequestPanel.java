@@ -62,6 +62,7 @@ public class RequestPanel extends SplitPane {
         urlBar.setPrefWidth(500);
         sendButton = new Button("Send");
         tabs = new TabPane();
+        VBox.setVgrow(tabs, Priority.ALWAYS);
 
         responseTextArea = new TextArea();
         responseTextArea.setPrefColumnCount(80);
@@ -85,7 +86,7 @@ public class RequestPanel extends SplitPane {
     private VBox createResponsePanel() {
         VBox responsePanel = new VBox();
         responsePanel.getChildren().add(statusCodeLabel);
-VBox.setVgrow(responseTextArea, Priority.ALWAYS);
+        VBox.setVgrow(responseTextArea, Priority.ALWAYS);
         responsePanel.getChildren().add(responseTextArea);
         return responsePanel;
     }
