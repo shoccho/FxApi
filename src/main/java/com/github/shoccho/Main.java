@@ -14,7 +14,6 @@ public class Main extends Application {
     private RequestDAO requestDAO;
     private OpenTabsDao openTabsDao;
     private ApplicationState applicationState;
-    private State state;
     private DBConnection dbConnection;
 
     public static void main(String[] args) {
