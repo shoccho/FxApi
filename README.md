@@ -1,6 +1,8 @@
-A very basic api client made using java fx
-
+### FxApi is a Lightweight and minimal api client
+in a world full of electron based api client with a ton of extra features why not tryout a lightweight api client with only the necessary feature sets that don't bundle a whole browser with it
+ 
  🏗️ Still under development 
+ 
  current screenshot
 ![image](https://github.com/user-attachments/assets/45009a26-77ef-4301-ad90-8eea2757cfbc)
 
