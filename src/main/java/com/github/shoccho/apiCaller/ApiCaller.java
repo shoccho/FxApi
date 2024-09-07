@@ -21,17 +21,13 @@ public class ApiCaller {
         String url = this.state.getUrl();
         String method = this.state.getMethod().toLowerCase();
 
-        if (method.equals("get")) {
-            return executeGetRequest(url);
-        } else if (method.equals("post")) {
-            return executePostRequest(url);
-        } else if (method.equals("put")) {
-            return executePutRequest(url);
-        } else if (method.equals("delete")) {
-            return executeDeleteRequest(url);
-        } else {
-            throw new UnsupportedOperationException("Unsupported method: " + method);
-        }
+        return switch (method) {
+            case "get" -> executeGetRequest(url);
+            case "post" -> executePostRequest(url);
+            case "put" -> executePutRequest(url);
+            case "delete" -> executeDeleteRequest(url);
+            default -> throw new UnsupportedOperationException("Unsupported method: " + method);
+        };
     }
 
     private ResponseData executeGetRequest(String url) throws IOException {

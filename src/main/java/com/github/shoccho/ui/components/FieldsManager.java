@@ -4,6 +4,8 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import com.github.shoccho.ui.components.actions.DeleteField;
 import com.github.shoccho.ui.components.actions.UpdateField;
@@ -63,17 +65,22 @@ public class FieldsManager {
         Button addButton = new Button("+");
         addButton.setOnAction(e -> {
             int length = this.state.getState(type).size();
+
+//TODO: use observable list
+            this.state.getState(type).add(new Parameter("",""));
             FieldRow newFieldRow = new FieldRow(length, "", "", type, clearRowAction, updateFieldAction);
             contentPanel.getChildren().add(newFieldRow);
         });
 
-        VBox buttonPanel = new VBox();
-        buttonPanel.setSpacing(5);
+        HBox buttonPanel = new HBox();
+        HBox.setHgrow(buttonPanel, Priority.ALWAYS);
+        buttonPanel.setStyle("-fx-alignment: top-right; -fx-padding: 5px");
         buttonPanel.getChildren().add(addButton);
 
-        BorderPane borderPane = new BorderPane();
-        borderPane.setCenter(contentPanel);
-        borderPane.setBottom(buttonPanel);
+        HBox borderPane = new HBox();
+        VBox.setVgrow(contentPanel, Priority.ALWAYS);
+        borderPane.getChildren().add(contentPanel);
+        borderPane.getChildren().add(buttonPanel);
 
         tab.setContent(borderPane);
     }
