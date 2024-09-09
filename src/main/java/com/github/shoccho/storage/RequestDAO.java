@@ -29,14 +29,17 @@ public class RequestDAO {
                 request.setUrl(result.getString(2));
                 request.setMethod(result.getString(3));
                 request.setTitle(result.getString(4));
-                String headerString = result.getString(5);
+                request.setBodyType(result.getString(5));
+                String headerString = result.getString(6);
                 request.setParamString("header", headerString);
 
-                String queryString = result.getString(6);
+                String queryString = result.getString(7);
                 request.setParamString("query", queryString);
 
-                String bodyString = result.getString(7);
+                String bodyString = result.getString(8);
                 request.setParamString("body", bodyString);
+                
+                request.setRawBody(result.getString(9));
 
                 allRequests.add(request);
             }
@@ -59,15 +62,17 @@ public class RequestDAO {
             request.setUrl(result.getString(2));
             request.setMethod(result.getString(3));
             request.setTitle(result.getString(4));
-
-            String headerString = result.getString(5);
+            request.setBodyType(result.getString(5));
+            String headerString = result.getString(6);
             request.setParamString("header", headerString);
 
-            String queryString = result.getString(6);
+            String queryString = result.getString(7);
             request.setParamString("query", queryString);
 
-            String bodyString = result.getString(7);
+            String bodyString = result.getString(8);
             request.setParamString("body", bodyString);
+
+            request.setRawBody(result.getString(9));
 
             return request;
 
@@ -83,7 +88,7 @@ public class RequestDAO {
             Connection connection = this.dbConnection.getConnection();
             Statement statement = connection.createStatement();
 
-            String sql = "INSERT INTO History(url, method, title, headers, queries, body) VALUES ('"
+            String sql = "INSERT INTO History(url, method, title, body_type headers, queries, body) VALUES ('"
                     + request.getUrl() + "','"
                     + request.getMethod() + "','"
                     + request.getTitle() + "','"

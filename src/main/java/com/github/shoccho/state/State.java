@@ -14,7 +14,7 @@ public class State {
     private final RequestDAO requestDAO;
     private final OpenTabsDao openTabsDao;
     private final UpdateHistory updateHistory;
-    
+
     public State(Integer key, OpenTabsDao db, RequestDAO requestDAO, UpdateHistory refreshHistory) {
         this.openTabsDao = db;
         this.requestDAO = requestDAO;
@@ -69,6 +69,14 @@ public class State {
         this.openTabsDao.saveRequest(request);
     }
 
+    public void setBodyType(String type) {
+        this.request.setBodyType(type);
+    }
+
+    public String getBodyType() {
+        return this.request.getBodyType();
+    }
+
     public ArrayList<Parameter> getState(String key) {
         return switch (key) {
             case "headers" -> this.request.getHeaders();
@@ -119,5 +127,13 @@ public class State {
         parameters.remove((int) id);
 
         this.openTabsDao.saveRequest(this.request);
+    }
+
+    public String getRawBody() {
+        return this.request.getRawBody();
+    }
+
+    public void setRawBody(String rawBody) {
+        this.request.setRawBody(rawBody);
     }
 }

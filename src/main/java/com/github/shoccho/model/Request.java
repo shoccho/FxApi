@@ -14,11 +14,16 @@ public class Request {
     private ArrayList<Parameter> queries;
     private ArrayList<Parameter> body;
     private String title;
+    private String bodyType;
+    private String rawBody;
+
 
     public Request() {
         this.headers = new ArrayList<>();
         this.queries = new ArrayList<>();
         this.body = new ArrayList<>();
+
+        this.bodyType = "raw";
         this.method = "GET";
         this.url = "http://";
         this.title = "";
@@ -109,6 +114,19 @@ public class Request {
 
     public void setBody(ArrayList<Parameter> body) {
         this.body = body;
+    }
+
+    public void setBodyType(String bodyType){
+        this.bodyType = bodyType;
+    }
+    public String getBodyType(){
+        return this.bodyType;
+    }
+    public void setRawBody(String rawBody){
+        this.rawBody = rawBody;
+    }
+    public String getRawBody(){
+        return this.rawBody;
     }
 
     public void setParamString(String type, String jsonString) {
