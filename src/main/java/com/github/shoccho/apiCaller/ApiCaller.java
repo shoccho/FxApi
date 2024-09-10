@@ -62,7 +62,12 @@ public class ApiCaller {
     }
 
     private ResponseData executePutRequest(String url) throws IOException {
-        String bodyJson = buildBodyJson(this.state.getState("body"));
+        String bodyJson = "";
+        if (this.state.getBodyType().equals("raw")) {
+            bodyJson = this.state.getRawBody();
+        } else {
+            bodyJson = buildBodyJson(this.state.getState("body"));
+        }
         RequestBody requestBody = RequestBody.create(
                 bodyJson, MediaType.parse("application/json"));
 
@@ -76,7 +81,13 @@ public class ApiCaller {
     }
 
     private ResponseData executePostRequest(String url) throws IOException {
-        String bodyJson = buildBodyJson(this.state.getState("body"));
+        String bodyJson = "";
+        if (this.state.getBodyType().equals("raw")) {
+            bodyJson = this.state.getRawBody();
+        } else {
+            bodyJson = buildBodyJson(this.state.getState("body"));
+        }
+
         RequestBody requestBody = RequestBody.create(
                 bodyJson, MediaType.parse("application/json"));
 

@@ -1,18 +1,16 @@
 package com.github.shoccho.ui.components;
 
+import com.github.shoccho.model.Parameter;
+import com.github.shoccho.state.State;
+import com.github.shoccho.ui.components.actions.DeleteField;
+import com.github.shoccho.ui.components.actions.UpdateField;
 import javafx.scene.control.*;
-import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
-import com.github.shoccho.ui.components.actions.DeleteField;
-import com.github.shoccho.ui.components.actions.UpdateField;
-import com.github.shoccho.model.Parameter;
-import com.github.shoccho.state.State;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 public class FieldsManager {
 
@@ -72,9 +70,7 @@ public class FieldsManager {
             TextArea rawBodyArea = new TextArea();
             rawBodyArea.setPrefColumnCount(40);
             VBox.setVgrow(rawBodyArea, Priority.ALWAYS);
-
             rawBodyArea.setText(state.getRawBody());
-            rawBodyArea.setStyle("-fx-background-color:red;");
             contentPanel.getChildren().add(rawBodyArea);
         } else {
             if (params != null) {

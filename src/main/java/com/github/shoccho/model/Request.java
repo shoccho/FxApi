@@ -29,13 +29,10 @@ public class Request {
         this.title = "";
         this.headers.add(new Parameter("accept","application/json"));
         this.headers.add(new Parameter("content-type","application/json"));
+        this.rawBody = "";
     }
 
     public String getTitle() {
-        return title;
-    }
-
-    public String getTitleForUI() {
         if (Objects.equals(this.title, "")) {
             return this.getMethod() + ":" + this.getUrl();
         }
@@ -44,16 +41,6 @@ public class Request {
 
     public void setTitle(String title) {
         this.title = title;
-    }
-
-    public Request(Integer id, String url, String method, String title, ArrayList<Parameter> headers, ArrayList<Parameter> queries, ArrayList<Parameter> body) {
-        this.id = id;
-        this.url = url;
-        this.method = method;
-        this.title = title;
-        this.headers = headers;
-        this.queries = queries;
-        this.body = body;
     }
 
     public Integer getId() {
@@ -119,12 +106,15 @@ public class Request {
     public void setBodyType(String bodyType){
         this.bodyType = bodyType;
     }
+
     public String getBodyType(){
         return this.bodyType;
     }
+
     public void setRawBody(String rawBody){
         this.rawBody = rawBody;
     }
+
     public String getRawBody(){
         return this.rawBody;
     }
