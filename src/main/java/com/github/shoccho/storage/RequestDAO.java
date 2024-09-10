@@ -21,24 +21,10 @@ public class RequestDAO {
             Statement statement = this.dbConnection.getConnection().createStatement();
             String sql = "select * from History ORDER BY id DESC;";
 
+            // TODO: don't get result just title and Id,
             ResultSet result = statement.executeQuery(sql);
             while (result.next()) {
-
-                Request request = new Request();
-                request.setId(result.getInt(1));
-                request.setUrl(result.getString(2));
-                request.setMethod(result.getString(3));
-                request.setTitle(result.getString(4));
-                String headerString = result.getString(5);
-                request.setParamString("header", headerString);
-
-                String queryString = result.getString(6);
-                request.setParamString("query", queryString);
-
-                String bodyString = result.getString(7);
-                request.setParamString("body", bodyString);
-
-                allRequests.add(request);
+                allRequests.add(Util.requestFromResult(result));
             }
 
         } catch (SQLException e) {
@@ -54,22 +40,7 @@ public class RequestDAO {
             String sql = "select * from History where id = " + id + ";";
 
             ResultSet result = statement.executeQuery(sql);
-            Request request = new Request();
-            request.setId(result.getInt(1));
-            request.setUrl(result.getString(2));
-            request.setMethod(result.getString(3));
-            request.setTitle(result.getString(4));
-
-            String headerString = result.getString(5);
-            request.setParamString("header", headerString);
-
-            String queryString = result.getString(6);
-            request.setParamString("query", queryString);
-
-            String bodyString = result.getString(7);
-            request.setParamString("body", bodyString);
-
-            return request;
+            return Util.requestFromResult(result);
 
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -83,13 +54,15 @@ public class RequestDAO {
             Connection connection = this.dbConnection.getConnection();
             Statement statement = connection.createStatement();
 
-            String sql = "INSERT INTO History(url, method, title, headers, queries, body) VALUES ('"
+            String sql = "INSERT INTO History(url, method, title, body_type, headers, queries, body, raw_body) VALUES ('"
                     + request.getUrl() + "','"
                     + request.getMethod() + "','"
                     + request.getTitle() + "','"
+                    + request.getBodyType() + "','"
                     + request.getHeadersString() + "','"
                     + request.getQueriesString() + "','"
-                    + request.getBodyString() + "');";
+                    + request.getBodyString() + "','"
+                    + request.getRawBody() + "');";
 
             statement.executeUpdate(sql, Statement.RETURN_GENERATED_KEYS);
 

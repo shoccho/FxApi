@@ -50,14 +50,14 @@ public class MainFrame extends Application {
         historyList.addListener((ListChangeListener<Request>) observable -> {
             requestHistory.getChildren().clear();
             for (Request request : historyList) {
-                Label itemLabel = new Label(request.getTitleForUI());
+                Label itemLabel = new Label(request.getTitle());
                 itemLabel.setOnMouseClicked(event -> applicationState.openTab(request.getId()));
                 requestHistory.getChildren().add(itemLabel);
             }
         });
 
         for (Request request : historyList) {
-            Label itemLabel = new Label(request.getTitleForUI());
+            Label itemLabel = new Label(request.getTitle());
             itemLabel.setOnMouseClicked(event -> applicationState.openTab(request.getId()));
             requestHistory.getChildren().add(itemLabel);
         }
