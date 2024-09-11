@@ -8,6 +8,7 @@ import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
+import org.fxmisc.richtext.CodeArea;
 
 import java.util.ArrayList;
 import java.util.HashMap;

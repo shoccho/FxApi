@@ -66,13 +66,15 @@ public class OpenTabsDao {
             Statement statement = connection.createStatement();
 
             if (request.getId() == null) {
-                String sql = "INSERT INTO OpenTabs (url, method, title, headers, queries, body) VALUES ('"
+                String sql = "INSERT INTO OpenTabs (url, method, title, body_type, headers, queries, body, raw_body) VALUES ('"
                         + request.getUrl() + "','"
                         + request.getMethod() + "','"
                         + request.getTitle() + "','"
+                        + request.getBodyType() + "','"
                         + request.getHeadersString() + "','"
                         + request.getQueriesString() + "','"
-                        + request.getBodyString() + "');";
+                        + request.getBodyString() + "','"
+                        + request.getRawBody() + "');";
                 statement.executeUpdate(sql, Statement.RETURN_GENERATED_KEYS);
 
                 ResultSet resultSet = statement.getGeneratedKeys();
@@ -80,14 +82,16 @@ public class OpenTabsDao {
                     generatedId = resultSet.getInt(1);
                 }
             } else {
-                String sql = "INSERT OR REPLACE INTO OpenTabs (id, url, method, title, headers, queries, body) VALUES ("
+                String sql = "INSERT OR REPLACE INTO OpenTabs (id, url, method, title, body_type, headers, queries, body, raw_body) VALUES ("
                         + request.getId() + ",'"
                         + request.getUrl() + "','"
                         + request.getMethod() + "','"
                         + request.getTitle() + "','"
+                        + request.getBodyType() + "','"
                         + request.getHeadersString() + "','"
                         + request.getQueriesString() + "','"
-                        + request.getBodyString() + "');";
+                        + request.getBodyString() + "','"
+                        + request.getRawBody() + "');";
                 statement.executeUpdate(sql);
                 generatedId = request.getId();
             }
