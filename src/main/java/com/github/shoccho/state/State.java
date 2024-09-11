@@ -7,6 +7,7 @@ import com.github.shoccho.storage.RequestDAO;
 import com.github.shoccho.ui.components.actions.UpdateHistory;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class State {
     private Request request;
@@ -44,7 +45,12 @@ public class State {
 
     public void saveUrl(String url) {
         this.request.setUrl(url);
+        this.updateTitle(null);
         openTabsDao.saveRequest(this.request);
+    }
+
+    public void updateTitle(String title) {
+        this.setTitle(Objects.requireNonNullElseGet(title, () -> this.getMethod() + ":" + this.getUrl()));
     }
 
     public void saveMethod(String method) {

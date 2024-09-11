@@ -10,8 +10,7 @@ public class DBConnection {
 
     public DBConnection() {
         try {
-            this.connection = DriverManager.getConnection("jdbc:sqlite:test.db");
-            System.out.println("isValid:" + connection.isValid(0));
+            this.connection = DriverManager.getConnection("jdbc:sqlite:data.db");
             initTable();
         } catch (Exception e) {
             e.printStackTrace();

@@ -68,6 +68,7 @@ public class ApiCaller {
         } else {
             bodyJson = buildBodyJson(this.state.getState("body"));
         }
+
         RequestBody requestBody = RequestBody.create(
                 bodyJson, MediaType.parse("application/json"));
 
@@ -124,7 +125,7 @@ public class ApiCaller {
             if (!bodyJson.isEmpty()) {
                 bodyJson.append(",");
             }
-            bodyJson.append("{\"").append(key).append("\":\"").append(value).append("\"}");
+            bodyJson.append("\"").append(key).append("\":\"").append(value).append("\"");
         }
         return "{" + bodyJson.toString() + "}";
     }

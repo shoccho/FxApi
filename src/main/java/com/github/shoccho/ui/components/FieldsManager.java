@@ -8,7 +8,6 @@ import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
-import org.fxmisc.richtext.CodeArea;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -29,7 +28,7 @@ public class FieldsManager {
         Tab queriesTab = new Tab("Queries");
         Tab bodyTab = new Tab("Body");
         bodyType = new ComboBox<>();
-
+        bodyType.setStyle("-fx-margin: 5px;");
         bodyType.getItems().addAll("form data", "raw");
         bodyType.setValue(state.getBodyType());
         bodyType.valueProperty().addListener((obs, oldValue, newValue) -> {
