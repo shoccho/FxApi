@@ -7,21 +7,8 @@ in a world full of electron based api client with a ton of extra features why no
 ![image](https://github.com/user-attachments/assets/45009a26-77ef-4301-ad90-8eea2757cfbc)
 
 
+### How to use
+- Hava java installed preferebly 22 ( 17 will also work )
+- Download the latest jar from the release tab
+- Run this app by double clicking the jar file or from the cli as `java -jar ./FxApi*.jar`
 
-Current Features:
- - making GET/POST/PUT/DELETE requests
- - adding custom headers
- - saving requests to history
- - loading requests from history
-
-Features planned:
- - different body type ( currently just a body json is sent which is populated via key value fields,
-   - raw text field
-   - binary
-- multipart post request
-- Separate Authtab
-- Output preview
-  - html
-  - image
-  - pretty json
-- import / export curl
