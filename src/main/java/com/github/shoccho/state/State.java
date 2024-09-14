@@ -141,5 +141,6 @@ public class State {
 
     public void setRawBody(String rawBody) {
         this.request.setRawBody(rawBody);
+        this.openTabsDao.saveRequest(this.request);
     }
 }
