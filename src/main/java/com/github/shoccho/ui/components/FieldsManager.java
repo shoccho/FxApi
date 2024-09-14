@@ -69,6 +69,7 @@ public class FieldsManager {
         if (type.equals("body") && state.getBodyType().equals("raw")) {
             TextArea rawBodyArea = new TextArea();
             rawBodyArea.setPrefColumnCount(40);
+            rawBodyArea.textProperty().addListener((observableValue, s, t1) -> state.setRawBody(t1));
             VBox.setVgrow(rawBodyArea, Priority.ALWAYS);
             rawBodyArea.setText(state.getRawBody());
             contentPanel.getChildren().add(rawBodyArea);
