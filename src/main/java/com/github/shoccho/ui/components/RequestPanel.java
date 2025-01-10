@@ -7,6 +7,10 @@ import javafx.scene.layout.*;
 import com.github.shoccho.apiCaller.ApiCaller;
 import com.github.shoccho.model.ResponseData;
 import com.github.shoccho.state.State;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 
 public class RequestPanel extends SplitPane {
@@ -45,12 +49,25 @@ public class RequestPanel extends SplitPane {
             try {
                 ResponseData response = apiCaller.callApi();
                 statusCodeLabel.setText("Status Code: " + response.getCode());
-                responseTextArea.setText(response.getMessage());
-
+                responseTextArea.setText(getFormattedResponse(response.getMessage()));
             } catch (Exception e) {
                 responseTextArea.setText(e.getMessage());
             }
         });
+    }
+
+    private String getFormattedResponse(String response){
+        try {
+            JSONArray json = new JSONArray(response);
+            return json.toString(4);
+        } catch (Exception e) {
+            try {
+                JSONObject json = new JSONObject(response);
+                return json.toString(4);
+            }catch (Exception e2){
+                return response;
+            }
+        }
     }
 
     private void initComponents(State state) {
@@ -67,6 +84,7 @@ public class RequestPanel extends SplitPane {
         responseTextArea = new TextArea();
         responseTextArea.setPrefColumnCount(80);
         responseTextArea.setEditable(false);
+        responseTextArea.setFont(Font.font("Consolas", FontWeight.NORMAL, 14));
 
         statusCodeLabel = new Label("Status Code: ");
     }
