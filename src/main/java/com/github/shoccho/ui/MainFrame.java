@@ -10,8 +10,11 @@ import javafx.collections.ObservableList;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
+import javafx.scene.transform.Scale;
 import javafx.stage.Stage;
 
 import static java.lang.Math.max;
@@ -24,7 +27,7 @@ public class MainFrame extends Application {
 
         this.applicationState = applicationState;
     }
-
+    private double scaleFactor = 1.0;
     @Override
     public void start(Stage primaryStage) {
         primaryStage.setTitle("FxApi");
@@ -80,6 +83,17 @@ public class MainFrame extends Application {
         splitPane.setDividerPositions(0.25);
 
         Scene scene = new Scene(splitPane, 1000, 500);
+
+        scene.addEventFilter(KeyEvent.KEY_PRESSED, event -> {
+            if (event.isControlDown()) {
+                if (event.getCode() == KeyCode.PLUS || event.getCode() == KeyCode.EQUALS) {
+                    scaleFactor += 0.05;
+                }else if (event.getCode() == KeyCode.MINUS) {
+                    scaleFactor -= 0.05;
+                }
+                splitPane.getTransforms().clear(); splitPane.getTransforms().add(new Scale(scaleFactor, scaleFactor, 0, 0));
+            }
+        });
         primaryStage.setScene(scene);
         primaryStage.show();
     }
