@@ -79,8 +79,11 @@ public class FieldsManager {
                     FieldRow newRow = new FieldRow(i, params.get(i).getKey(), params.get(i).getValue(), type, clearRowAction, updateFieldAction);
                     contentPanel.getChildren().add(newRow);
                 }
+                if (params.isEmpty()){
+                    FieldRow newRow = new FieldRow(0, "", "", type, clearRowAction, updateFieldAction);
+                    contentPanel.getChildren().add(newRow);
+                }
             }
-
             Button addButton = new Button("+");
             addButton.setOnAction(e -> {
                 int length = this.state.getState(type).size();
